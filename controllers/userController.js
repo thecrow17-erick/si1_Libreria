@@ -52,10 +52,52 @@ const postUsuarios = async (req = request,res= response)=>{
     }
 }
 const putUsuarios = async(req = request, res = response)=>{
-
+    const {id} = req.params;
+    const {nombre, correo, telefono,rolId} = req.body;
+    try {
+        const user = await Usuario.findByPk(id, {
+            attributes: ['id','nombre','correo','telefono']
+        });
+        user.nombre = nombre;
+        user.correo = correo;
+        user.rolId = rolId;
+        user.telefono = telefono
+        await user.save()
+        return res.status(200).json({
+            user,
+            msg: "Se ha cambiado correctamente los datos"
+        })
+    } catch (err) {
+        console.log('Ha ocurrido un error inesperado', err);
+        return res.status(400).json({
+            error: true,
+            msg: "Ha ocurrido un error, intente otra vez"
+        })
+    }
+}
+const deleteUsuarios = async(req = request, res = response)=>{
+    const {id} = req.params;
+    try {
+        const user = await Usuario.findByPk(id,{
+            attributes: ['id','nombre','correo','telefono']
+        })
+        user.estado = false;
+        await user.save();
+        return res.status(200).json({
+            user,
+            msg: "El usuario ha sido eliminado"
+        });
+    } catch (err) {
+        console.log("Ha ocurrido un error inesperado", err);
+        return res.status(400).json({
+            error: true,
+            msg: "Ha ocurrido inesperado, intente otra vez"
+        })
+    } 
 }
 export {
     getUsuarios,
     postUsuarios,
-    putUsuarios
+    putUsuarios,
+    deleteUsuarios
 }
