@@ -1,8 +1,9 @@
 import jwt from "jsonwebtoken"
 
-const generarJWT = (uid = '')=>{
+
+const generarJWT = ({id = '',rolId })=>{
     return new Promise((resolve, reject) => {
-        const payload = {uid}
+        const payload = {id, rolId }
 
         jwt.sign(payload,process.env.SECRETORPRIVATEKEY,{
             expiresIn : '4h'
@@ -18,6 +19,7 @@ const generarJWT = (uid = '')=>{
 
     })
 }
+
 
 export {
     generarJWT

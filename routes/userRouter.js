@@ -1,7 +1,7 @@
 import {Router} from 'express';
 import { getUsuarios, postUsuarios,putUsuarios,deleteUsuarios } from '../controllers/userController.js';
 import {check} from 'express-validator';
-import { validorCampos } from '../middlewares/validarCampos.js';
+import { validarCampos } from '../middlewares/validarCampos.js';
 import {validarRol,validarUser} from '../helpers/dbValidator.js';
 
 
@@ -14,7 +14,7 @@ router.post('/',[
     check('password','La contraseña es obligatorio.').isLength({min : 8}).notEmpty(),
     check('correo', 'Ingrese un correo valido.').isEmail().notEmpty(),
     check('telefono','Ingrese un numero de telefono valido.').isLength({min: 8, max: 10 }).notEmpty().isNumeric(),
-    validorCampos
+    validarCampos
 ], postUsuarios);
 //privado - actualizar usuarios 
 router.put('/:id',[
@@ -23,12 +23,12 @@ router.put('/:id',[
     check('telefono','Ingrese un numero de telefono valido.').isLength({min: 8, max: 10 }).notEmpty().isNumeric(),
     check('rolId').custom(validarRol).notEmpty(),
     check('id').custom(validarUser).notEmpty(),
-    validorCampos
+    validarCampos
 ],putUsuarios);
 
 //privado - eliminar usuarios
 router.delete('/:id',[
     check('id').custom(validarUser).notEmpty(),
-    validorCampos
+    validarCampos
 ],deleteUsuarios)
 export default router;

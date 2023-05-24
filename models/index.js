@@ -1,5 +1,6 @@
 import Rol from './rol.js';
-import Usuario from './usuario.js';
+import Usuario,{iniciarSesion, cerrarSesion} from './usuario.js';
+
 
 
 //relacion de uno a muchos. rol -> usuario
@@ -20,5 +21,7 @@ Usuario.belongsTo(Rol, {
 
 export {
     Rol,
-    Usuario
+    Usuario,
+    iniciarSesion,
+    cerrarSesion
 }

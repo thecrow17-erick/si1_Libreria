@@ -2,7 +2,7 @@ import {request,response} from 'express';
 import { validationResult } from 'express-validator';
 
 
-const validorCampos = (req = request , res = response, next)=>{
+const validarCampos = (req = request , res = response, next)=>{
     const errores = validationResult(req);
     if(!errores.isEmpty()){
         return res.status(400).json({
@@ -12,4 +12,4 @@ const validorCampos = (req = request , res = response, next)=>{
     next();
 }
 
-export { validorCampos }
+export { validarCampos }

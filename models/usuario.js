@@ -42,5 +42,70 @@ Usuario.sync()
         console.error('Error al actualizar el modelo:', error);
     });
 
+//modelo para iniciar sesion
+const iniciarSesion = db.define('iniciarSesion', {
+    hora: {
+        type: DataTypes.TIME,
+        allowNull: false
+    },
+    fecha: {
+        type: DataTypes.DATE,
+        allowNull: false
+    },
+    usuarioId:{
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+            model: Usuario,
+            key: 'id'
+        }
+    }
+},{
+    timestamps: false
+});
+
+iniciarSesion.sync()
+    .then(() => {
+        console.log('Modelo actualizado exitosamente');
+    })
+    .catch((error) => {
+        console.error('Error al actualizar el modelo:', error);
+    });
+
+
+//modelo para cerrar sesion
+const cerrarSesion = db.define('cerrarSesion',{
+    hora: {
+        type: DataTypes.TIME,
+        allowNull: false
+    },
+    fecha: {
+        type: DataTypes.DATE,
+        allowNull: false
+    },
+    usuarioId:{
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+            model: Usuario,
+            key: 'id'
+        }
+    }
+},{
+    timestamps: false
+});
+
+cerrarSesion.sync()
+    .then(() => {
+        console.log('Modelo actualizado exitosamente');
+    })
+    .catch((error) => {
+        console.error('Error al actualizar el modelo:', error);
+    });
+
 
 export default Usuario;
+export{ 
+    iniciarSesion,
+    cerrarSesion
+}

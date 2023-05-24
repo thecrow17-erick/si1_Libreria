@@ -1,5 +1,5 @@
 import express from 'express';
-import userRouter from '../routes/userRouter.js';
+import {userRouter, authRouter} from '../routes/index.js';
 import db from '../config/db.js';
 import cors from 'cors';
 
@@ -8,7 +8,8 @@ class server {
         this.app = express();
         this.PORT = process.env.PORT
         this.path ={
-            user: '/api/usuario'
+            user: '/api/usuario',
+            auth: '/api/auth'
         }
         //middlewares
         this.middlewares();
@@ -21,7 +22,10 @@ class server {
     }
     //rutas
     routes(){
+        //CRUD de usuarios(crear usuario, leer usuario, actualizar usuario, borrar usuario)
         this.app.use(this.path.user, userRouter);
+        //autenticacion de usuarios
+        this.app.use(this.path.auth, authRouter);
     }
 
     //middlewares
