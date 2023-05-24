@@ -1,27 +1,50 @@
 import express from 'express';
-import userRoutes from '../routes/userRouter.js';
+import userRouter from '../routes/userRouter.js';
+import db from '../config/db.js';
+import cors from 'cors';
 
 class server {
     constructor(){
         this.app = express();
         this.PORT = process.env.PORT
         this.path ={
-            user: '/user'
+            user: '/api/usuario'
         }
-        this.listen();
-        this.routes();
+        //middlewares
         this.middlewares();
+        //activar el server
+        this.listen();
+        //las rutas del servidor
+        this.routes();
+        //conectar la base de datos
+        this.db();
     }
     //rutas
     routes(){
-        this.app.use(this.path.user, userRoutes);
+        this.app.use(this.path.user, userRouter);
     }
 
     //middlewares
     middlewares(){
-        //habilitar pugs
-        this.app.set('view engine', 'pug');
-        this.app.set('views','./views');
+        //habilitar la carpeta publica 
+        this.app.use(express.static('public'));
+        
+        //habilitar para los pedidos API
+        this.app.use(cors());
+
+        // habilitar los formularios 
+        this.app.use(express.urlencoded({extended: true}))
+        this.app.use(express.json());
+    }
+    //conectar db
+    async db(){
+        try {
+            await db.authenticate();
+            db.sync();
+            console.log('coneccion correcta a la base de datos')
+        } catch (error) {
+            console.log('Ha ocurrido un error inesperado', error);            
+        }
     }
     //iniciar server
     listen(){
@@ -29,7 +52,6 @@ class server {
             console.log(`El servidor esta en el ${this.PORT}`)
         })
     }
-    
 }
 
 export default server;
