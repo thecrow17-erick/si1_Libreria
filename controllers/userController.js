@@ -28,7 +28,7 @@ const postUsuarios = async (req = request,res= response)=>{
             msg: `La cuenta ${nombre} o ${correo} ya existe en el sistema`
         })
     };
-    const rol = await Rol.findOne({where : {nombre: 'CLIENT_ROL'}})
+    const rol = await Rol.findOne({where : {nombre: 'CLIENTE_ROL'}})
     const data = {
         nombre,
         correo,

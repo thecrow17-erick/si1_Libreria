@@ -5,7 +5,7 @@ config({path: '.env'})
 
 const db = new Sequelize(process.env.NAMEDATABASE, process.env.USERNAMEDB, process.env.DBPASSWORD,{
     host: process.env.HOST,
-    port: 3306,
+    port: process.env.DB_PORT,
     dialect: 'mysql'
 });
 

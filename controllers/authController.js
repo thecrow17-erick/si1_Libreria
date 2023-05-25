@@ -6,7 +6,6 @@ const login = async(req = request, res = response)=>{
     const {correo,password} = req.body;
     try {
         const user = await Usuario.findOne({where: {correo}});
-        console.log(user);
         if(!user){
             return res.status(400).json({
                 autenticado: false,

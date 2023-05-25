@@ -1,6 +1,9 @@
 import {DataTypes} from 'sequelize';
+import Rol from './rol.js';
 import db from '../config/db.js';
 import bcrypt from 'bcryptjs';
+
+
 const Usuario = db.define('usuarios',{
     nombre: {
         type: DataTypes.STRING,
@@ -21,6 +24,14 @@ const Usuario = db.define('usuarios',{
     estado: {
         type: DataTypes.BOOLEAN,
         defaultValue: true
+    },
+    rolId: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+            model: Rol,
+            key: 'id'
+        }
     }
 }, {
     hooks: {
