@@ -20,7 +20,7 @@ const getUsuarios = async(req = request,res= response)=>{
     });
 }
 const postUsuarios = async (req = request,res= response)=>{
-    const {nombre, correo, password, telefono} = req.body;
+    const {nombre, correo, password, telefono, rolId} = req.body;
     const usuarioDB = await Usuario.findOne({where: {nombre } || {correo}});
     if(usuarioDB){
         return res.status(400).json({
@@ -28,13 +28,12 @@ const postUsuarios = async (req = request,res= response)=>{
             msg: `La cuenta ${nombre} o ${correo} ya existe en el sistema`
         })
     };
-    const rol = await Rol.findOne({where : {nombre: 'CLIENTE_ROL'}})
     const data = {
         nombre,
         correo,
         password,
         telefono,
-        rolId: rol.id
+        rolId
     }
     try {
         const usuario  = await Usuario.create(data)
@@ -95,9 +94,18 @@ const deleteUsuarios = async(req = request, res = response)=>{
         })
     } 
 }
+const mostrarRoles = async(req, res= response)=>{
+    const roles = await Rol.findAll({
+        attributes: ['id','nombre']
+    });
+    res.status(200).json({
+        roles
+    })  
+}
 export {
     getUsuarios,
     postUsuarios,
     putUsuarios,
-    deleteUsuarios
+    deleteUsuarios,
+    mostrarRoles
 }

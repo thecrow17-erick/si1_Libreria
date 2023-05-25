@@ -1,6 +1,7 @@
 import {request,response} from 'express';
-import { Usuario } from '../models/index.js';
+import { Usuario, iniciarSesion } from '../models/index.js';
 import { generarJWT } from '../helpers/generarJwt.js';
+import { fechaActual, horaActual } from '../helpers/FechaHora.js';
 
 const login = async(req = request, res = response)=>{
     const {correo,password} = req.body;
@@ -29,8 +30,14 @@ const login = async(req = request, res = response)=>{
         //genera jwt
         const token = await generarJWT({
             id: user.id,
-            rolId: user.Id
+            rolId: user.rolId
         })
+        const DatoTiempo = {
+            hora: horaActual,
+            fecha: fechaActual,
+            usuarioId: user.id
+        }
+        iniciarSesion.create(DatoTiempo);
         return res.status(200).json({
             autenticado: true,
             msg: "ok Login",
@@ -46,5 +53,5 @@ const login = async(req = request, res = response)=>{
 }
 
 export {
-    login
+    login,
 }

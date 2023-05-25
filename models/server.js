@@ -9,7 +9,7 @@ class server {
         this.PORT = process.env.PORT
         this.path ={
             user: '/api/usuario',
-            auth: '/api/auth'
+            auth: '/api/auth',
         }
         //middlewares
         this.middlewares();
@@ -26,6 +26,7 @@ class server {
         this.app.use(this.path.user, userRouter);
         //autenticacion de usuarios
         this.app.use(this.path.auth, authRouter);
+        //solo mostrar los roles
     }
 
     //middlewares

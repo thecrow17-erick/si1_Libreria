@@ -1,5 +1,5 @@
 import {Router} from 'express';
-import { getUsuarios, postUsuarios,putUsuarios,deleteUsuarios } from '../controllers/userController.js';
+import { getUsuarios, postUsuarios,putUsuarios,deleteUsuarios, mostrarRoles } from '../controllers/userController.js';
 import {check} from 'express-validator';
 import { validarCampos } from '../middlewares/validarCampos.js';
 import {validarRol,validarUser} from '../helpers/dbValidator.js';
@@ -7,7 +7,9 @@ import {validarRol,validarUser} from '../helpers/dbValidator.js';
 
 const router = Router();
 
-
+//mostrar roles
+router.get('/roles', mostrarRoles);
+//mostrar usuarios
 router.get('/' ,getUsuarios);
 router.post('/',[
     check('nombre','El nombre es obligatorio').notEmpty(),

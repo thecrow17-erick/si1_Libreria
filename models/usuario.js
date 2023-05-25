@@ -60,7 +60,7 @@ const iniciarSesion = db.define('iniciarSesion', {
         allowNull: false
     },
     fecha: {
-        type: DataTypes.DATE,
+        type: DataTypes.DATEONLY,
         allowNull: false
     },
     usuarioId:{
@@ -91,7 +91,7 @@ const cerrarSesion = db.define('cerrarSesion',{
         allowNull: false
     },
     fecha: {
-        type: DataTypes.DATE,
+        type: DataTypes.DATEONLY,
         allowNull: false
     },
     usuarioId:{
