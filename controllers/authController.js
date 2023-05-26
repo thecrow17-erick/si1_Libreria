@@ -1,5 +1,5 @@
 import {request,response} from 'express';
-import { Usuario, iniciarSesion } from '../models/index.js';
+import { Usuario, cerrarSesion, iniciarSesion } from '../models/index.js';
 import { generarJWT } from '../helpers/generarJwt.js';
 import { fechaActual, horaActual } from '../helpers/FechaHora.js';
 
@@ -51,7 +51,28 @@ const login = async(req = request, res = response)=>{
         })
     }
 }
-
+const unlogin = async(req = request, res = response)=>{
+    const {usuario} = req;
+    try {
+        await cerrarSesion.create({
+            fecha : fechaActual,
+            hora: horaActual,
+            usuarioId: usuario.id,
+        })
+        res.status(200).json({
+            usuario,
+            unlog: true,
+            msg: 'Se ha cerrado sesion correctamente'
+        })
+    } catch (error) {
+        console.log('Ha ocurrido un error inesperado',error);
+        res.status(400).json({
+            unlog: false,
+            msg: 'Ha ocurrido un error inesperado'
+        })
+    }
+}
 export {
     login,
+    unlogin
 }
