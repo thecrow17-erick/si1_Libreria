@@ -78,7 +78,7 @@ const postUsuarios = async (req = request,res= response)=>{
     }
     try {
         const usuario  = await Usuario.create(data)
-        usuario.save();
+        await usuario.save();
         return res.status(200).json({
             usuario,
             msg: `El usuario ${nombre} ha sido registrado con exito`
@@ -100,11 +100,15 @@ const putUsuarios = async(req = request, res = response)=>{
         const user = await Usuario.findByPk(id, {
             attributes: ['id','nombre','correo','telefono']
         });
-        user.nombre = nombre;
-        user.correo = correo;
-        user.rolId = rolId;
-        user.telefono = telefono
-        await user.save()
+        await Promise.all([ 
+            user.update({
+                nombre, 
+                correo, 
+                telefono,
+                rolId
+            }),
+            await user.save()
+        ])
         return res.status(200).json({
             user,
             msg: "Se ha cambiado correctamente los datos"
@@ -125,8 +129,10 @@ const deleteUsuarios = async(req = request, res = response)=>{
         const user = await Usuario.findByPk(id,{
             attributes: ['id','nombre','correo','telefono']
         })
-        user.estado = false;
-        await user.save();
+        await Promise.all([
+            user.update({estado: false}),
+            await user.save()
+        ])
         return res.status(200).json({
             user,
             msg: "El usuario ha sido eliminado"

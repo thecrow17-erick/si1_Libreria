@@ -76,9 +76,13 @@ const postLibro = async(req=request, res=response)=>{
             registrado: false,
             msg: `El libro ${titulo} ya esta en el sistema`
         })
-    }else if(!libroDB.estado){
-        libroDB.estado = true,
-        libroDB.save();
+    }else if(libroDB && !libroDB.estado){
+        await Promise.all([
+            libroDB.update({estado: true}),
+            libroDB.save()
+        ])  
+        // libroDB.estado = true,
+        // libroDB.save();
         return res.status(201).json({
             libro: libroDB,
             registrado: true,
@@ -99,9 +103,8 @@ const postLibro = async(req=request, res=response)=>{
             editorialId: editorialDB[0].dataValues.id,
             categoriaId: categoriaDB[0].dataValues.id
         } 
-        console.log(data);   
         const libro = await Libro.create(data);
-        libro.save();
+        await libro.save();
         await LibroAutor.create({
             autorId: autorDB[0].dataValues.id,
             libroId: libro.id
@@ -178,7 +181,11 @@ const deleteLibro = async (req = request, res = response) => {
                 msg: 'El libro no existe'
             });
         }
-        await libroDB.update({ estado: false });
+
+        await Promise.all([
+         libroDB.update({ estado: false }),
+         libroDB.save()
+        ])    
         res.status(200).json({
             eliminado: true,
             libroDB,
