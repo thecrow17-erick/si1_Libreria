@@ -1,5 +1,5 @@
 import express from 'express';
-import {userRouter, authRouter} from '../routes/index.js';
+import {userRouter, authRouter,libroRouter} from '../routes/index.js';
 import db from '../config/db.js';
 import cors from 'cors';
 
@@ -10,6 +10,7 @@ class server {
         this.path ={
             user: '/api/usuario',
             auth: '/api/auth',
+            libros: '/api/libro'
         }
         //middlewares
         this.middlewares();
@@ -26,7 +27,8 @@ class server {
         this.app.use(this.path.user, userRouter);
         //autenticacion de usuarios
         this.app.use(this.path.auth, authRouter);
-        //solo mostrar los roles
+        //CRUD libros
+        this.app.use(this.path.libros, libroRouter);
     }
 
     //middlewares

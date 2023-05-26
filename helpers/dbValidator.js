@@ -1,4 +1,4 @@
-import {Rol, Usuario} from '../models/index.js';
+import {Libro, Rol, Usuario} from '../models/index.js';
 
 
 const validarRol = async(rolId = Number)=>{
@@ -7,14 +7,20 @@ const validarRol = async(rolId = Number)=>{
         throw new Error('El rol no es valido');
     }
 }
-const validarUser =async (id = '')=>{
+const validarUser =async (id = Number)=>{
     const userDB = await Usuario.findByPk(id);
     if(!userDB){
         throw new Error('El usuario no existe en el sistema')
     }
 }
-
+const validarLibro = async(id = Number)=>{
+    const libroDB = await Libro.findByPk(id);
+    if(!libroDB){
+        throw new Error('El usuario no existe en el sistema')
+    }
+}
 export {
     validarUser,
-    validarRol
+    validarRol,
+    validarLibro
 }

@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
 import {request,response} from 'express';
-import {Usuario} from '../models/index.js';
+import {Rol, Usuario} from '../models/index.js';
 
 const validarJwt = async(req = request, res= response, next)=>{
     const token = req.header('x-token');
@@ -13,7 +13,13 @@ const validarJwt = async(req = request, res= response, next)=>{
     try {
         const {id} = jwt.verify(token, process.env.SECRETORPRIVATEKEY);
         //llamo al usuario para verificar si va todo bien
-        const user = await Usuario.findByPk(id);
+        const user = await Usuario.findByPk(id,{
+            attributes: ['id', 'nombre', 'correo', 'telefono','estado'],
+            include: {
+                model: Rol,
+                attributes: ['id','nombre']
+            }
+        });
 
         //verifico si existe el usuario
         if(!user){

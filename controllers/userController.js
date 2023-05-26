@@ -1,10 +1,12 @@
 import {request,response} from 'express';
 import {Rol, Usuario} from '../models/index.js';
 
+
+//mostrar todos los usuarios - totales - paginado
 const getUsuarios = async(req = request,res= response)=>{
     const { limit = 5, offset = 0} = req.query;
     const [total , usuarios] = await Promise.all([
-        Usuario.count(),
+        Usuario.count({where: {estado: true}}),
         Usuario.findAll({limit, 
             offset,
             attributes: ['id', 'nombre', 'correo','telefono'],
@@ -19,6 +21,45 @@ const getUsuarios = async(req = request,res= response)=>{
         usuarios
     });
 }
+
+//muestra el usuario por id
+const getUsuario = async(req = request,res= response)=>{
+    const {id} = req.params
+
+    try {
+        const usuarioDB = await Usuario.findByPk(id,{
+            attributes: ['id','nombre','correo','telefono'],
+            include: {
+                model: Rol,
+                attributes: ['id', 'nombre']
+            }
+        });
+        res.status(200).json({
+            usuario: usuarioDB,
+            vista: true,
+            msg: 'Se ha mostrado el usuario correctamente'
+        })
+        
+    } catch (error) {
+        console.log('Ha ocurrido un error inesperado', error);
+        res.status(401).json({
+            error: true,
+            msg: 'Ha ocurrido un error inesperado'
+        })
+    }
+    
+
+}
+
+//decifra los datos del toke
+const getToken = async(req = request, res = response)=>{
+    const {usuario} = req;
+    res.status(200).json({
+        usuario,
+        msg: 'Se ha decifrado el token correctamente'
+    })
+}
+//crear usuario - privado(aun no implementado)
 const postUsuarios = async (req = request,res= response)=>{
     const {nombre, correo, password, telefono, rolId} = req.body;
     const usuarioDB = await Usuario.findOne({where: {nombre } || {correo}});
@@ -50,6 +91,8 @@ const postUsuarios = async (req = request,res= response)=>{
         })
     }
 }
+
+//actualizar usuario - privado(aun no implementado)
 const putUsuarios = async(req = request, res = response)=>{
     const {id} = req.params;
     const {nombre, correo, telefono,rolId} = req.body;
@@ -74,6 +117,8 @@ const putUsuarios = async(req = request, res = response)=>{
         })
     }
 }
+
+//eliminar usuario - privado(aun no implementado)
 const deleteUsuarios = async(req = request, res = response)=>{
     const {id} = req.params;
     try {
@@ -94,6 +139,7 @@ const deleteUsuarios = async(req = request, res = response)=>{
         })
     } 
 }
+//mostrar todos los roles
 const mostrarRoles = async(req, res= response)=>{
     const roles = await Rol.findAll({
         attributes: ['id','nombre']
@@ -107,5 +153,7 @@ export {
     postUsuarios,
     putUsuarios,
     deleteUsuarios,
-    mostrarRoles
+    mostrarRoles,
+    getToken,
+    getUsuario
 }
