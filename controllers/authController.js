@@ -9,7 +9,6 @@ const login = async(req = request, res = response)=>{
         const user = await Usuario.findOne({where: {correo}});
         if(!user){
             return res.status(400).json({
-                autenticado: false,
                 msg: "El usuario no existe"
             })
         }
@@ -39,14 +38,12 @@ const login = async(req = request, res = response)=>{
         }
         iniciarSesion.create(DatoTiempo);
         return res.status(200).json({
-            autenticado: true,
             msg: "ok Login",
             token
         })
     } catch (err) {
         console.log(err)
         res.status(500).json({
-            autenticado: false,
             msg: 'Algo salio mal'
         })
     }
@@ -61,13 +58,11 @@ const unlogin = async(req = request, res = response)=>{
         })
         res.status(200).json({
             usuario,
-            unlog: true,
             msg: 'Se ha cerrado sesion correctamente'
         })
     } catch (error) {
         console.log('Ha ocurrido un error inesperado',error);
         res.status(400).json({
-            unlog: false,
             msg: 'Ha ocurrido un error inesperado'
         })
     }

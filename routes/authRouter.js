@@ -12,9 +12,9 @@ router.post('/login', [
     check('password','El password es invalido').notEmpty().isLength({min: 8}),
     validarCampos
 ],login)
+
 router.post('/unlogin',[
     validarJwt
 ],unlogin)
 
 export default router;
-

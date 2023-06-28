@@ -2,6 +2,7 @@ import express from 'express';
 import {userRouter, authRouter,libroRouter} from '../routes/index.js';
 import db from '../config/db.js';
 import cors from 'cors';
+import fileupload from 'express-fileupload';
 
 class server {
     constructor(){
@@ -10,7 +11,8 @@ class server {
         this.path ={
             user: '/api/usuario',
             auth: '/api/auth',
-            libros: '/api/libro'
+            libros: '/api/libro',
+            ventas: '/api/venta'
         }
         //middlewares
         this.middlewares();
@@ -29,10 +31,17 @@ class server {
         this.app.use(this.path.auth, authRouter);
         //CRUD libros
         this.app.use(this.path.libros, libroRouter);
+        //ventas de libros
+        //this.app.use(this.path.ventas, ventaRouter);
     }
 
     //middlewares
     middlewares(){
+        //habilitar para subir archivos 
+        this.app.use(fileupload({
+            useTempFiles : true,
+            tempFileDir : './tmp/'
+        }));
         //habilitar la carpeta publica 
         this.app.use(express.static('public'));
         

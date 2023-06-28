@@ -39,4 +39,5 @@ router.delete('/:id',[
     check('id').custom(validarLibro),
     validarCampos
 ],deleteLibro);
+
 export default router;

@@ -6,5 +6,5 @@ import libroRouter from './libroRouter.js';
 export {
     userRouter,
     authRouter,
-    libroRouter
+    libroRouter,
 }

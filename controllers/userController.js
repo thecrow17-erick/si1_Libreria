@@ -36,14 +36,12 @@ const getUsuario = async(req = request,res= response)=>{
         });
         res.status(200).json({
             usuario: usuarioDB,
-            vista: true,
             msg: 'Se ha mostrado el usuario correctamente'
         })
         
     } catch (error) {
         console.log('Ha ocurrido un error inesperado', error);
         res.status(401).json({
-            error: true,
             msg: 'Ha ocurrido un error inesperado'
         })
     }
@@ -65,7 +63,6 @@ const postUsuarios = async (req = request,res= response)=>{
     const usuarioDB = await Usuario.findOne({where: {nombre } || {correo}});
     if(usuarioDB){
         return res.status(400).json({
-            error : true,
             msg: `La cuenta ${nombre} o ${correo} ya existe en el sistema`
         })
     };
@@ -86,7 +83,6 @@ const postUsuarios = async (req = request,res= response)=>{
     } catch (error) {
         console.log('ha ocurrido un error inesperado',error);
         res.status(401).json({
-            error: true,
             msg: 'Ha ocurrido un error'
         })
     }
@@ -116,7 +112,6 @@ const putUsuarios = async(req = request, res = response)=>{
     } catch (err) {
         console.log('Ha ocurrido un error inesperado', err);
         return res.status(400).json({
-            error: true,
             msg: "Ha ocurrido un error, intente otra vez"
         })
     }
@@ -140,7 +135,6 @@ const deleteUsuarios = async(req = request, res = response)=>{
     } catch (err) {
         console.log("Ha ocurrido un error inesperado", err);
         return res.status(400).json({
-            error: true,
             msg: "Ha ocurrido inesperado, intente otra vez"
         })
     } 

@@ -16,6 +16,10 @@ const Libro = db.define('Libros',{
         type: DataTypes.DATEONLY,
         allowNull: false
     },
+    img:{
+        type: DataTypes.STRING,
+        allowNull: false 
+    },
     estado:{
         type: DataTypes.BOOLEAN,
         defaultValue: true

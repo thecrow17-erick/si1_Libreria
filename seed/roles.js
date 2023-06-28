@@ -1,12 +1,12 @@
 const roles = [
     {
-        nombre: "EMPLEADO_ROL"
+        nombre: "Empleado"
     },
     {
-        nombre:"ADMIN_ROL"
+        nombre:"Administrador"
     },
     {
-        nombre:"CLIENTE_ROL"
+        nombre:"Cliente"
     }
 ];
 
