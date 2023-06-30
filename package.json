@@ -7,7 +7,8 @@
   "scripts": {
     "server": "nodemon app.js",
     "start": "node app.js",
-    "db:importar": "node ./seed/seeder.js -p"
+    "db:imp_pagos": "node ./seed/seeder.js -p",
+    "db:imp_roles": "node ./seed/seeder.js -i"
   },
   "keywords": [],
   "author": "",
