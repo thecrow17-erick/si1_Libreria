@@ -7,7 +7,7 @@
   "scripts": {
     "server": "nodemon app.js",
     "start": "node app.js",
-    "db:importar": "node ./seed/seeder.js -i"
+    "db:importar": "node ./seed/seeder.js -p"
   },
   "keywords": [],
   "author": "",

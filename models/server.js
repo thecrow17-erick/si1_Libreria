@@ -1,5 +1,5 @@
 import express from 'express';
-import {userRouter, authRouter,libroRouter} from '../routes/index.js';
+import {userRouter, authRouter,libroRouter,ventaRouter} from '../routes/index.js';
 import db from '../config/db.js';
 import cors from 'cors';
 import fileupload from 'express-fileupload';
@@ -32,7 +32,7 @@ class server {
         //CRUD libros
         this.app.use(this.path.libros, libroRouter);
         //ventas de libros
-        //this.app.use(this.path.ventas, ventaRouter);
+        this.app.use(this.path.ventas, ventaRouter);
     }
 
     //middlewares

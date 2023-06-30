@@ -1,4 +1,4 @@
-import {Libro, Rol, Usuario} from '../models/index.js';
+import {Libro, NotaVenta, Rol, TipoPago, Usuario} from '../models/index.js';
 
 
 const validarRol = async(rolId = Number)=>{
@@ -19,8 +19,22 @@ const validarLibro = async(id = Number)=>{
         throw new Error('El usuario no existe en el sistema')
     }
 }
+const validarVenta = async(id=Number)=>{
+    const ventaDB = await NotaVenta.findByPk(id);
+    if(!ventaDB){
+        throw new Error('La venta no existe en el sistema')
+    }
+}
+const validarPago = async(id=Number)=>{
+    const pagoDB = await TipoPago.findByPk(id);
+    if(!pagoDB){
+        throw new Error('No es un tipo de pago')
+    }
+}
 export {
     validarUser,
     validarRol,
-    validarLibro
+    validarLibro,
+    validarVenta,
+    validarPago
 }

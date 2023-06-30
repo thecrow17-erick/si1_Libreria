@@ -1,4 +1,4 @@
-import server from './models/server.js';
+import server from './models/index.js';
 import {config} from 'dotenv';
 
 config({path: '.env'});
