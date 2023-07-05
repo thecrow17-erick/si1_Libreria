@@ -1,23 +1,32 @@
 import express from 'express';
-import {userRouter, authRouter,libroRouter,ventaRouter} from '../routes/index.js';
-import db from '../config/db.js';
 import cors from 'cors';
 import fileupload from 'express-fileupload';
+import {Server as SocketIo} from 'socket.io';
+import http from 'http';
+
+import {userRouter, authRouter,libroRouter,ventaRouter, proveedorRouter} from '../routes/index.js';
+import {buscarLibro} from '../sockets/fetchBook.js';
+import db from '../config/db.js';
 
 class server {
     constructor(){
         this.app = express();
+        this.server = http.createServer(this.app)
+        this.io = new SocketIo(this.server)
         this.PORT = process.env.PORT
         this.path ={
             user: '/api/usuario',
             auth: '/api/auth',
             libros: '/api/libro',
-            ventas: '/api/venta'
+            ventas: '/api/venta',
+            proveedor: '/api/proveedor'
         }
         //middlewares
         this.middlewares();
         //activar el server
         this.listen();
+        //sockets
+        this.sockets();
         //las rutas del servidor
         this.routes();
         //conectar la base de datos
@@ -33,8 +42,17 @@ class server {
         this.app.use(this.path.libros, libroRouter);
         //ventas de libros
         this.app.use(this.path.ventas, ventaRouter);
+        //proveedores de libros
+        this.app.use(this.path.proveedor, proveedorRouter);
     }
 
+    //sockets
+    sockets(){
+        this.io.on('connection', socket =>{
+            console.log('cliente conectado');
+            buscarLibro(socket);
+        })
+    }
     //middlewares
     middlewares(){
         //habilitar para subir archivos 
@@ -64,7 +82,7 @@ class server {
     }
     //iniciar server
     listen(){
-        this.app.listen(this.PORT,  ()=>{
+        this.server.listen(this.PORT,  ()=>{
             console.log(`El servidor esta en el ${this.PORT}`)
         })
     }

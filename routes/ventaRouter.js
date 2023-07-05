@@ -1,5 +1,5 @@
 import {Router} from 'express';
-import {getVentas, getVenta, postVenta, tiposPagos, deleteVenta} from '../controllers/ventaController.js';
+import {getVentas, getVenta, postVenta, tiposPagos, deleteVenta, putVenta} from '../controllers/ventaController.js';
 import { check } from 'express-validator';
 import { validarPago, validarVenta } from '../helpers/dbValidator.js';
 import { validarCampos } from '../middlewares/validarCampos.js';
@@ -27,6 +27,10 @@ router.post('/', [
   validarCampos
 ],postVenta)
 
+//edita las ventas
+router.put('',[
+  
+],putVenta)
 //elimina una venta del registro
 router.delete('/:id',[
   check('id').custom(validarVenta),

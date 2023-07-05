@@ -72,7 +72,6 @@ const postLibro = async(req=request, res=response)=>{
             libroDB.update({estado: true}),
             libroDB.save()
         ])  
-
         return res.status(201).json({
             libro: libroDB,
             msg: 'Se ha registrado correctamente el libro'
@@ -186,5 +185,5 @@ export {
     getLibro,
     postLibro,
     putLibro,
-    deleteLibro
+    deleteLibro,
 }

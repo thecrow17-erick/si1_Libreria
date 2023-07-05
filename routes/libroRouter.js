@@ -14,6 +14,7 @@ router.get('/:id',[
     check('id').custom(validarLibro),
     validarCampos
 ],getLibro)
+
 //privado - para crear libros
 router.post('/',[
     check('titulo','El libro tiene que tener un titulo valido').notEmpty().isLength({min: 5}),

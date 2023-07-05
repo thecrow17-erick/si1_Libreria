@@ -87,7 +87,7 @@ const DetalleVenta = db.define('detalle_ventas',{
   },
   descuento: {
     type: DataTypes.DECIMAL(4,2),
-    defaultValueL: 0.00,
+    defaultValue: 0.00,
     validate: {
       max: 1.00,
       min: 0.00
@@ -95,8 +95,34 @@ const DetalleVenta = db.define('detalle_ventas',{
   },
   importe: {
     type: DataTypes.DECIMAL(10,2),
-    allowNull: false,
+    defaultValue: 0.00
+  },
+  precio: {
+    type: DataTypes.DECIMAL(10,2),
+    defaultValue: 0.00
   }
+},{
+  hooks:{
+    beforeBulkCreate:[
+      async function (instancia){
+        await Promise.all(instancia.map(async (detalleVenta)=>{
+          const libro = await Libro.findByPk(detalleVenta.libroId,{
+            attributes: ['precio']
+          });
+          detalleVenta.precio= libro.precio;
+          const total = detalleVenta.precio * detalleVenta.cantidad;
+          detalleVenta.importe = total - (total * detalleVenta.descuento);
+        }))
+      }
+    ],       
+    afterBulkCreate: async function(instancia){
+      await Promise.all(instancia.map(async (detalleVenta)=>{
+        const totalNuevo  = detalleVenta.importe;
+        await NotaVenta.increment('total', { by: totalNuevo, where: { id: detalleVenta.notaVentaId } });
+      }))
+    },
+  },
+  updatedAt: false
 })
 
 DetalleVenta.sync()

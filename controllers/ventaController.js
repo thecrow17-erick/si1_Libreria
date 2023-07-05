@@ -57,18 +57,18 @@ const getVentas = async(req= request, res=response)=>{
 const getVenta = async(req=request, res= response)=>{
   const {id} = req.params;
   try {
-    const usuario =  await NotaVenta.findByPk(id, {
+    const notaVenta =  await NotaVenta.findByPk(id, {
       attributes: ['id', 'fecha','hora', 'total'],
       include: [
         {
           model: Usuario,
           as: 'vendedor',
-          attributes: ['id', 'nombre']
+          attributes: ['nombre']
         },
         {
           model: Usuario,
           as: 'cliente',
-          attributes: ['id','nombre', 'correo']
+          attributes: ['nombre', 'correo','telefono']
         },
         {
           model: Libro,
@@ -80,8 +80,7 @@ const getVenta = async(req=request, res= response)=>{
       ]
     });
     res.status(200).json({
-      msg: 'Ok get',
-      usuario
+      notaVenta
     })
 
   } catch (err) {
@@ -118,9 +117,7 @@ const postVenta =async(req=request,res= response)=>{
       ]
     });
     if(!clienteDB){
-      return res.status(401).json({
-        msg: 'El cliente no esta en el sistema'
-      })
+      return res.status(401).json('El cliente no esta en el sistema')
     };
     const obj = {
       vendedorId: vendedor.id,
@@ -130,9 +127,7 @@ const postVenta =async(req=request,res= response)=>{
       tipoPagoId: pagoId
     };
     if(detalles.length === 0){
-      return res.status(401).json({
-        msg: 'el arreglo esta vacio'
-      })
+      return res.status(401).json('No hay prodcutos que se puedan vender.')
     }
     const notaVenta = await NotaVenta.create(obj);
     detalles.forEach((objeto) => {
@@ -155,38 +150,42 @@ const postVenta =async(req=request,res= response)=>{
 }
 //editar  la venta 
 const putVenta = async(req = request, res = response)=>{
-  
+
 }
 //elimina una venta y sus detalles,
 const deleteVenta = async(req=request,res=response)=>{
   const {correo, password} = req.body;
   const {id} = req.params;
-  const adminDB = await Usuario.findOne({where: {correo , estado: true},include:[{
-    model: Rol,
-    where: {
-      nombre: 'Administrador'
-    } 
-  }]});
-  if(!adminDB){
-    return res.status(401).json({
-      msg: "El usuario no es administrador"
-    })
+  try {
+    const adminDB = await Usuario.findOne({where: {correo , estado: true},include:[{
+      model: Rol,
+      where: {
+        nombre: 'Administrador'
+      } 
+    }]});
+    if(!adminDB){
+      return res.status(401).json({
+        msg: "El usuario no es administrador"
+      })
+    }
+    const validarPassword = await adminDB.verificarPassword(password);
+    if(!validarPassword){
+      return res.status(401).json('El password es incorrecto')
+    }
+    //elimino tanto de detalles y despues de notas
+    await Promise.all([
+      DetalleVenta.destroy({where:{
+        notaVentaId: id
+      }}),
+      NotaVenta.destroy({
+        where: {id}
+      })
+    ]);
+    res.status(200).json("Se ha eliminado correctamente la venta.")
+  } catch (err) {
+    console.log(err);
+    res.status(400).json("Ha ocurrido un error")    
   }
-  const validarPassword = await Usuario.verificarPassword(password);
-  if(!validarPassword){
-    return res.status(401).json({
-      msg: 'El password es incorrecto'
-    })
-  }
-  //elimino tanto de detalles y despues de notas
-  await Promise.all([
-    DetalleVenta.destroy({where:{
-      notaVentaId: id
-    }}),
-    NotaVenta.destroy({
-      where: {id}
-    })
-  ])
 
 }
 const tiposPagos = async(req, res= response)=>{
@@ -206,6 +205,7 @@ export {
   getVentas,
   getVenta,
   postVenta,
+  putVenta,
   tiposPagos,
   deleteVenta
 }

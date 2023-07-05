@@ -1,4 +1,4 @@
-import {Libro, NotaVenta, Rol, TipoPago, Usuario} from '../models/index.js';
+import {Libro, NotaVenta, Rol, TipoPago, Usuario ,Proveedor} from '../models/index.js';
 
 
 const validarRol = async(rolId = Number)=>{
@@ -31,10 +31,17 @@ const validarPago = async(id=Number)=>{
         throw new Error('No es un tipo de pago')
     }
 }
+const validarProveedor = async(id =Number)=>{
+    const proveedor = await Proveedor.findByPk(id);
+    if(!proveedor){
+        throw new Error('No es un proveedor')
+    }
+} 
 export {
     validarUser,
     validarRol,
     validarLibro,
     validarVenta,
-    validarPago
+    validarPago,
+    validarProveedor
 }
