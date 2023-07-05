@@ -32,7 +32,6 @@ jobs:
         with:
           name: node-app
           path: .
-      - name: initizi
 
   deploy:
     runs-on: ubuntu-latest
