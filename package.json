@@ -6,7 +6,7 @@
   "main": "app.js",
   "scripts": {
     "server": "nodemon app.js",
-    "start": "node app.js",
+    "build": "node app.js",
     "db:imp_pagos": "node ./seed/seeder.js -p",
     "db:imp_roles": "node ./seed/seeder.js -i"
   },
