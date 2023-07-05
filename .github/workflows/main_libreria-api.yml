@@ -61,12 +61,6 @@ jobs:
           node-version: '18.x'
 
       - name: initialize db
-        env: 
-          NAMEDATABASE: ${{secrets.NAMEDATABASE}}
-          USERNAMEDB: ${{secrets.USERNAMEDB}}
-          DBPASSWORD: ${{secrets.DBPASSWORD}}
-          HOST: $${{secrets.HOST}}
-          DB_PORT: ${{secrets.DB_PORT}}
         run: |
           npm run db:imp_pagos
           npm run db:imp_roles
