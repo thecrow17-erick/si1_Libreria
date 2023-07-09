@@ -1,6 +1,7 @@
 import {request,response} from 'express';
 import { Autor, Categoria, Editorial, Libro, LibroAutor } from '../models/index.js';
-
+import {postImageBlobStorage} from '../config/azureBlobStorage.js';
+import { v4 as uuidv4} from 'uuid';
 
 //muestra todos los libros - total - paginado
 const getLibros = async(req=request, res=response)=>{
@@ -61,52 +62,54 @@ const getLibro = async(req=request, res=response)=>{
 }
 //crea datos de un libro
 const postLibro = async(req=request, res=response)=>{
-    const {titulo,precio, fecha_publicacion,categoria,autor, editorial,img} = req.body;
-    const libroDB = await Libro.findOne({where: {titulo}});
-    if(libroDB && libroDB.estado){
-        return res.status(400).json({
-            msg: `El libro ${titulo} ya esta en el sistema`
-        })
-    }else if(libroDB && !libroDB.estado){
-        await Promise.all([
-            libroDB.update({estado: true}),
-            libroDB.save()
-        ])  
-        return res.status(201).json({
-            libro: libroDB,
-            msg: 'Se ha registrado correctamente el libro'
-        })
+    const {titulo,precio,fecha_publicacion} = req.body;
+    const data = {
+        titulo,
+        precio,
+        fecha_publicacion,
+        categoriaId: req.categoria,
+        editorialId: req.editorial
     }
-    //pregunto si existen esos atributos, sino existen los creo
-    const [autorDB, categoriaDB, editorialDB] = await Promise.all([
-        Autor.findOrCreate({where:{nombre: autor}}),
-        Categoria.findOrCreate({where:{nombre: categoria}}),
-        Editorial.findOrCreate({where:{nombre: editorial}})
-    ])
+    const autores = req.autores;
+    const {img} = req.files;
     try {
-        const data = {
-            titulo,
-            precio,
-            fecha_publicacion,
-            img,
-            editorialId: editorialDB[0].dataValues.id,
-            categoriaId: categoriaDB[0].dataValues.id
-        } 
+        const libroDB = await Libro.findOne({where: {titulo}})
+        //si el libro su estado es false
+        if(libroDB && libroDB.estado){
+            return res.status(400).json("El libro se encuentra en el sistema")
+        }
+        if(libroDB && !libroDB.estado){
+            await libro.update({estado: true})
+            return res.status(400).json("El libro se ha reincorporado");
+        }
+        const cortarNombre = img.name.split('.');
+        const extension = cortarNombre[cortarNombre.length - 1]
+        //validar extensiones 
+        const validarExtensiones = ['png','jpg','jpeg'];
+        if(!validarExtensiones.includes(extension)){
+            return res.status(400).json("La extension no es permitida")
+        }
+        //el uuid que ira en la db como img
+        const imgName =  uuidv4()+'.' +extension;
+ 
+        const imgPath = img.tempFilePath;
+        //guardo el dato para la db
+        data.img = imgName;
+        //creo un nuevo libro en la db
         const libro = await Libro.create(data);
-        await libro.save();
-        await LibroAutor.create({
-            autorId: autorDB[0].dataValues.id,
+        //crea un arreglo de objetos del libro y sus autores
+        const autoresLibro = autores.map(autor =>({
+            autorId: autor,
             libroId: libro.id
-        })
-        res.status(200).json({
-            libro,
-            msg: 'Se ha registrado correctamente el libro'
-        })
+        }));
+        await LibroAutor.bulkCreate(autoresLibro);
+        //lo subo a mi blob storage en azure
+        const resp = await postImageBlobStorage( imgName, imgPath);
+        console.log(resp);
+        return res.status(200).json(`Se ha creado correctamente el libro ${data.titulo}`)
     } catch (err) {
-        console.log('Ha ocurrido un error inesperado', err);
-        res.status(401).json({
-            msg: 'Ha ocurrido un error inesperado'
-        })
+        console.log(err);
+        res.status(401).json("ha ocurrido un error")
     }
 }   
 const putLibro = async(req=request, res=response)=>{
