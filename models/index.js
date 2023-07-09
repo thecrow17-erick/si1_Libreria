@@ -121,6 +121,20 @@ NotaCompra.belongsTo(Proveedor, {
         allowNull: false
     }
 });
+
+//relacion 1 a muchos, usuario(comprador) -> nota_compra
+Usuario.hasMany(NotaCompra, {
+    foreignKey: {
+        name: 'compradorId',
+        allowNull: false
+    }
+})
+NotaCompra.belongsTo(Usuario, {
+    foreignKey: {
+        name: 'compradorId',
+        allowNull: false
+    }
+});
 //relacion de muchos a muchos -> autor y categoria
 Libro.belongsToMany(Autor, { through: LibroAutor ,foreignKey:{
     name: 'libroId',

@@ -4,11 +4,14 @@ import {Rol, Usuario} from '../models/index.js';
 
 //mostrar todos los usuarios - totales - paginado
 const getUsuarios = async(req = request,res= response)=>{
-    const { limit = 5, offset = 0} = req.query;
+    let { limit = 5, offset = 0} = req.query;
+    console.log(limit,offset);
+    limit = parseInt(limit);
+    offset = parseInt(offset);
     const [total , usuarios] = await Promise.all([
         Usuario.count({where: {estado: true}}),
-        Usuario.findAll({limit, 
-            offset,
+        Usuario.findAll({limit: limit,
+            offset: offset,
             attributes: ['id', 'nombre', 'correo','telefono'],
             include: {
                 model: Rol,

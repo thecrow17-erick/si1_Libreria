@@ -1,10 +1,14 @@
-import {Router} from 'express';
 import {getVentas, getVenta, postVenta, tiposPagos, deleteVenta, putVenta} from '../controllers/ventaController.js';
+import {Router} from 'express';
 import { check } from 'express-validator';
+
 import { validarPago, validarVenta } from '../helpers/dbValidator.js';
 import { validarCampos } from '../middlewares/validarCampos.js';
 import { validarJwt } from '../middlewares/validarJwt.js';
-import { validarDetalle } from '../helpers/objectValidator.js';
+import {validarDetalle } from '../helpers/objectValidator.js';
+
+
+
 const router = Router();
 
 
@@ -21,7 +25,7 @@ router.get('/:id',[
 router.post('/', [
   validarJwt,
   check('cliente', 'No es nombre').notEmpty().isString(),
-  check('detalles','Detalles no es un arreglo').notEmpty().isLength({min:1}).isArray(),
+  check('detalles','Detalles no es un arreglo').notEmpty().isLength({min:1}).isArray() ,
   check('detalles.*','Los datos del arreglo detalle deben ser objetos').isObject().bail().custom(validarDetalle),
   check('pagoId').notEmpty().isNumeric().custom(validarPago),
   validarCampos

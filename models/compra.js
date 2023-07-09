@@ -2,6 +2,7 @@ import {DataTypes} from 'sequelize';
 import db from '../config/db.js';
 import Proveedor from './proveedor.js';
 import Libro from './libros.js';
+import Usuario from './usuario.js';
 const NotaCompra = db.define('nota_compra',{
   fecha:{
     type: DataTypes.DATEONLY,
@@ -20,6 +21,14 @@ const NotaCompra = db.define('nota_compra',{
     allowNull: false,
     references: {
       model: Proveedor,
+      key: 'id'
+    }
+  },
+  compradorId: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    references: {
+      model: Usuario,
       key: 'id'
     }
   }

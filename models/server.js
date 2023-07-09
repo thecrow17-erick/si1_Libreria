@@ -1,10 +1,10 @@
 import express from 'express';
 import cors from 'cors';
-import fileupload from 'express-fileupload';
+import fileUpload from 'express-fileupload';
 import {Server as SocketIo} from 'socket.io';
 import http from 'http';
 
-import {userRouter, authRouter,libroRouter,ventaRouter, proveedorRouter} from '../routes/index.js';
+import {userRouter, authRouter,libroRouter,ventaRouter, proveedorRouter,compraRouter} from '../routes/index.js';
 import {buscarLibro} from '../sockets/fetchBook.js';
 import db from '../config/db.js';
 
@@ -19,6 +19,7 @@ class server {
             auth: '/api/auth',
             libros: '/api/libro',
             ventas: '/api/venta',
+            compras: '/api/compra',
             proveedor: '/api/proveedor'
         }
         //middlewares
@@ -44,6 +45,8 @@ class server {
         this.app.use(this.path.ventas, ventaRouter);
         //proveedores de libros
         this.app.use(this.path.proveedor, proveedorRouter);
+        //compra de libros
+        this.app.use(this.path.compras, compraRouter);
     }
 
     //sockets
@@ -56,9 +59,9 @@ class server {
     //middlewares
     middlewares(){
         //habilitar para subir archivos 
-        this.app.use(fileupload({
+        this.app.use(fileUpload({
             useTempFiles : true,
-            tempFileDir : './tmp/'
+            tempFileDir : '/tmp/'
         }));
         //habilitar la carpeta publica 
         this.app.use(express.static('public'));

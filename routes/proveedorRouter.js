@@ -20,7 +20,7 @@ router.post('/',[
   check('nombre','El nombre es obligatorio').notEmpty(),
   check('correo', 'Ingrese un correo valido.').isEmail().notEmpty(),
   check('telefono','Ingrese un numero de telefono valido.').isLength({min: 8, max: 10 }).notEmpty().isNumeric(),
-  check('correo', 'Ingrese un correo valido.').isString().notEmpty(),
+  check('direecion', 'Ingrese un correo valido.').isString().notEmpty(),
   validarCampos
 ], postProveedor);
 
