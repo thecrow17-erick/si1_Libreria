@@ -7,8 +7,8 @@ const validarAutores = async(req=request, res=response, next)=>{
     return res.status(400).json({ error: 'Debe proporcionar al menos un autor.' });
   }
   const autoresIdS = [];
-  for(const autore in autores){
-    const [autor] = await Autor.findOrCreate({
+  for(const autore of autores){
+    const [autor, create] = await Autor.findOrCreate({
       where: {
         nombre: autore
       },
