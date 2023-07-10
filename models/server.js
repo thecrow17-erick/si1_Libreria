@@ -12,7 +12,11 @@ class server {
     constructor(){
         this.app = express();
         this.server = http.createServer(this.app)
-        this.io = new SocketIo(this.server)
+        this.io = new SocketIo(this.server,{
+            cors: {
+                origin: 'http://127.0.0.1:5173'
+            }
+        })
         this.PORT = process.env.PORT
         this.path ={
             user: '/api/usuario',
@@ -67,9 +71,7 @@ class server {
         this.app.use(express.static('public'));
         
         //habilitar para los pedidos API
-        this.app.use(cors({
-            origin: 'http://127.0.0.1:5173'
-        }));
+        this.app.use(cors());
 
         // habilitar los formularios 
         this.app.use(express.urlencoded({extended: true}))
