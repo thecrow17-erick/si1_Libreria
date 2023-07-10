@@ -67,7 +67,9 @@ class server {
         this.app.use(express.static('public'));
         
         //habilitar para los pedidos API
-        this.app.use(cors());
+        this.app.use(cors({
+            origin: 'http://127.0.0.1:5173'
+        }));
 
         // habilitar los formularios 
         this.app.use(express.urlencoded({extended: true}))
