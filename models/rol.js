@@ -7,6 +7,8 @@ const Rol = db.define('roles',{
         type: DataTypes.STRING(40),
         allowNull: false,
     },
+},{
+    timestamps: false
 }); 
 
 

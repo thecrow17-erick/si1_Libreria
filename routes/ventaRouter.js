@@ -1,4 +1,4 @@
-import {getVentas, getVenta, postVenta, tiposPagos, deleteVenta, putVenta} from '../controllers/ventaController.js';
+import {getVentas, getVenta, postVenta, tiposPagos, deleteVenta} from '../controllers/ventaController.js';
 import {Router} from 'express';
 import { check } from 'express-validator';
 
@@ -31,10 +31,6 @@ router.post('/', [
   validarCampos
 ],postVenta)
 
-//edita las ventas
-router.put('',[
-  
-],putVenta)
 //elimina una venta del registro
 router.delete('/:id',[
   check('id').custom(validarVenta),

@@ -102,6 +102,7 @@ const DetalleVenta = db.define('detalle_ventas',{
     defaultValue: 0.00
   }
 },{
+  timestamps: false,
   hooks:{
     beforeBulkCreate:[
       async function (instancia){
@@ -122,7 +123,6 @@ const DetalleVenta = db.define('detalle_ventas',{
       }))
     },
   },
-  updatedAt: false
 })
 
 DetalleVenta.sync()

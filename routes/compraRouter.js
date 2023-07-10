@@ -1,6 +1,6 @@
 import {Router} from 'express';
 
-import {getCompra, getCompras, postCompra} from '../controllers/compraController.js'
+import {getCompra, getCompras, postCompra, deleteCompra} from '../controllers/compraController.js'
 import { validarCompra} from '../helpers/dbValidator.js';
 import { validarCampos } from '../middlewares/validarCampos.js';
 import { check } from 'express-validator';
@@ -26,5 +26,12 @@ router.post('/',[
   check('detalles.*','Los datos del arreglo detalle deben ser objetos').isObject().bail().custom(validarDetalleCompra),
   validarCampos
 ] ,postCompra)
+
+router.delete('/:id',[
+  check('id').custom(validarCompra),
+  check('correo','No es un correo').notEmpty().isEmail(),
+  check('password', 'Ingrese una contraseña correcta').notEmpty().isString().isLength({min: 8}),
+  validarCampos
+],deleteCompra)
 
 export default router;

@@ -98,7 +98,7 @@ const postVenta =async(req=request,res= response)=>{
   try {
     const rol = vendedor.role.dataValues.nombre;
     if(rol !== "Administrador" && rol !== "Empleado"){
-      res.status(401).json({
+      return res.status(401).json({
         msg: "el usuario no es vendedor"
       })
     }
@@ -148,10 +148,7 @@ const postVenta =async(req=request,res= response)=>{
     })
   }
 }
-//editar  la venta 
-const putVenta = async(req = request, res = response)=>{
 
-}
 //elimina una venta y sus detalles,
 const deleteVenta = async(req=request,res=response)=>{
   const {correo, password} = req.body;
@@ -205,7 +202,6 @@ export {
   getVentas,
   getVenta,
   postVenta,
-  putVenta,
   tiposPagos,
   deleteVenta
 }

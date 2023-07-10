@@ -6,6 +6,8 @@ const Editorial = db.define('editoriales',{
         type: DataTypes.STRING(100),
         allowNull: false
     }
+},{ 
+    timestamps: false
 });
 
 Editorial.sync()

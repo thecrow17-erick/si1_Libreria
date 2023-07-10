@@ -78,11 +78,8 @@ const postUsuarios = async (req = request,res= response)=>{
     }
     try {
         const usuario  = await Usuario.create(data)
-        await usuario.save();
-        return res.status(200).json({
-            usuario,
-            msg: `El usuario ${nombre} ha sido registrado con exito`
-        })
+        console.log(usuario);
+        return res.status(200).json(`El usuario ${nombre} ha sido registrado con exito`)
     } catch (error) {
         console.log('ha ocurrido un error inesperado',error);
         res.status(401).json({

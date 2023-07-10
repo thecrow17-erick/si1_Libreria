@@ -71,7 +71,8 @@ const LibroAutor = db.define('libro_autor',{
     }
 },
 {
-    primaryKey: false
+    primaryKey: false,
+    timestamps: false
 });
 LibroAutor.sync()
     .then(() => {

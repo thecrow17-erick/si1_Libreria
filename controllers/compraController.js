@@ -1,5 +1,6 @@
 import {request,response} from 'express';
-import { Libro, NotaCompra, Proveedor, Usuario } from '../models/index.js';
+import { DetalleCompra, Libro, NotaCompra, Proveedor, Usuario, Rol } from '../models/index.js';
+import { fechaActual, horaActual } from '../helpers/FechaHora.js';
 
 
 
@@ -47,7 +48,6 @@ const getCompra = async(req=request, res=response)=>{
       include: [
         {
           model: Usuario,
-          as: 'Comprador',
           attributes: ['id','nombre']
         },{
           model: Proveedor,
@@ -55,7 +55,7 @@ const getCompra = async(req=request, res=response)=>{
         },
         {
           model: Libro,
-          attributes: ['nombre', 'id'],
+          attributes: ['titulo', 'id'],
           through: {
             attributes: ['cantidad', 'precio', 'importe']
           }
@@ -75,9 +75,89 @@ const getCompra = async(req=request, res=response)=>{
 const postCompra = async(req=request, res=response)=>{
   const {proveedor, detalles = []} = req.body;
   const {usuario} = req;
+  try {
+    //verifico si el usuario es administrador
+    const usuarioRol = usuario.role.nombre;
+    if(usuarioRol !== "Administrador" && usuarioRol !== "Empleado"){
+      return res.status(400).json(`El usuario ${usuario.nombre} no es administrador`);
+    }
+    //verifico al proveedor en la DB
+    const proveedorDB = await Proveedor.findOne({
+      where: {
+        nombre: proveedor
+      }
+    });
+    if(!proveedorDB){
+      return res.status(400).json(`El proveedor ${proveedor} no se encuentra en el sistema`)
+    }
+    //meto datos en obj para subir a la db la compra
+    const obj= {
+      fecha: fechaActual,
+      hora: horaActual,
+      proveedorId: proveedorDB.id,
+      compradorId: usuario.id
+    }
+    //verifico si la venta no es null
+    if(detalles.length === 0){
+      return res.status(401).json('No hay productos que se puedan comprar.')
+    }
+    //creo la nota de compra
+    const notaCompra = await NotaCompra.create(obj);
+    //meto id de la nota de compra a los detalles
+    detalles.forEach(detalle => {
+      detalle.NotaCompraId= notaCompra.id
+    });
+    const detalleCompra = await DetalleCompra.bulkCreate(detalles);
+    res.status(200).json({
+      msg:"Se ha realizado la compra con exito",
+      notaCompra,
+      detalleCompra
+    })
+  } catch (err) {
+    console.log(err);
+    res.status(401).json("Ha ocurrido un error inesperado")
+  }
+}
+const deleteCompra = async(req=request, res=response)=>{
+  const {correo, password} = req.body;
+  const {id} = req.params;
+  try {
+    const adminDB = await Usuario.findOne({where: {correo , estado: true},include:[{
+      model: Rol,
+      where: {
+        nombre: 'Administrador'
+      } 
+    }]});
+    if(!adminDB){
+      return res.status(401).json({
+        msg: "El usuario no es administrador"
+      })
+    }
+    const validarPassword = await adminDB.verificarPassword(password);
+    if(!validarPassword){
+      return res.status(401).json('El password es incorrecto')
+    }
+
+    //elimino la nota de compra 
+    await Promise.all([
+      DetalleCompra.destroy({where:{
+        NotaCompraId: id
+      },
+      individualHooks: true
+      }),
+      NotaCompra.destroy({
+        where: {id}
+      })
+    ]);
+    res.status(200).json("Se ha eliminado correctamente la compra.")
+  } catch (err) {
+    console.log(err);
+    res.status(400).json("Ha ocurrido un error")    
+  }
 }
 export {
   getCompras,
   getCompra,
-  postCompra
+  postCompra,
+  deleteCompra
 }

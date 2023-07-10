@@ -17,10 +17,10 @@ router.get('/:id', [
 
 //privado - crea un proveedor
 router.post('/',[
-  check('nombre','El nombre es obligatorio').notEmpty(),
+  check('nombre','El nombre es obligatorio').notEmpty().isString(),
   check('correo', 'Ingrese un correo valido.').isEmail().notEmpty(),
-  check('telefono','Ingrese un numero de telefono valido.').isLength({min: 8, max: 10 }).notEmpty().isNumeric(),
-  check('direecion', 'Ingrese un correo valido.').isString().notEmpty(),
+  check('telefono','Ingrese un numero de telefono valido.').isLength({min: 8, max: 10 }).notEmpty().isAlphanumeric(),
+  check('direccion', 'Ingrese una direccion valida').isString().notEmpty(),
   validarCampos
 ], postProveedor);
 

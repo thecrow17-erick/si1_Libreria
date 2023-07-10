@@ -6,6 +6,8 @@ const Autor = db.define('autores',{
         type: DataTypes.STRING(100),
         allowNull: false
     }
+},{
+    timestamps: false
 });
 Autor.sync()
     .then(() => {

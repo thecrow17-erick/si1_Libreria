@@ -17,6 +17,10 @@ const Proveedor = db.define('proveedores',{
   telefono: {
     type: DataTypes.CHAR(10),
     allowNull: false
+  },
+  estado:{
+    type: DataTypes.BOOLEAN,
+    defaultValue: true
   }
 })
 

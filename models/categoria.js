@@ -6,6 +6,8 @@ const Categoria = db.define('categorias',{
         type: DataTypes.STRING(100),
         allowNull: false
     }
+},{
+    timestamps: false
 });
 
 Categoria.sync()

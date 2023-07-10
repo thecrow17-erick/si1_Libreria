@@ -1,5 +1,5 @@
 import {request,response} from 'express';
-import { Autor, Categoria, Editorial, Libro, LibroAutor } from '../models/index.js';
+import { Autor, Categoria, Editorial, Inventario, Libro, LibroAutor } from '../models/index.js';
 import {postImageBlobStorage} from '../config/azureBlobStorage.js';
 import { v4 as uuidv4} from 'uuid';
 
@@ -80,7 +80,7 @@ const postLibro = async(req=request, res=response)=>{
         }
         if(libroDB && !libroDB.estado){
             await libro.update({estado: true})
-            return res.status(400).json("El libro se ha reincorporado");
+            return res.status(200).json("El libro se ha reincorporado");
         }
         const cortarNombre = img.name.split('.');
         const extension = cortarNombre[cortarNombre.length - 1]
@@ -106,6 +106,10 @@ const postLibro = async(req=request, res=response)=>{
         //lo subo a mi blob storage en azure
         const resp = await postImageBlobStorage( imgName, imgPath);
         console.log(resp);
+        const inventario = await Inventario.create({
+            libroId: libro.id
+        })
+        console.log(inventario);
         return res.status(200).json(`Se ha creado correctamente el libro ${data.titulo}`)
     } catch (err) {
         console.log(err);
