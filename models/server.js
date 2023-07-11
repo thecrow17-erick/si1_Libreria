@@ -14,7 +14,7 @@ class server {
         this.server = http.createServer(this.app)
         this.io = new SocketIo(this.server,{
             cors: {
-                origin: 'http://127.0.0.1:5173'
+                origin: '*'
             }
         })
         this.PORT = process.env.PORT
