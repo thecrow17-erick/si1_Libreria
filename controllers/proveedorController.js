@@ -6,8 +6,11 @@ const getProveedores = async(req=request, res=response)=>{
   const {limit = 5 , offset = 0 } = req.query;
   try {
     const [total, proveedores] = await Promise.all([
-      Proveedor.count(),
+      Proveedor.count({where: {estado: true}}),
       Proveedor.findAll({
+        where: {
+          estado: true
+        },
         limit,
         offset,
         attributes: ['id','nombre', 'correo', 'telefono', 'direccion'],
@@ -73,19 +76,20 @@ const putProveedor = async(req=request, res=response)=>{
     res.status(401).json("Ha ocurrido un error inesperado.")
   }
 }
-
 const deleteProveedor = async(req=request, res=response)=>{
   const {id} = req.params;
   try {
-    const proveedor = await Proveedor.destroy({where: {id}})
-
-    res.status(200).json({
-      proveedor,
-      msg: "Se ha eliminado correctamente"
+    const proveedor = await Proveedor.findByPk(id,{});
+    if (proveedor) {
+      return res.status(400).json("El proveedor no se encuentra en el sistema.");
+    }
+    await proveedor.update({
+      estado: false
     })
+    res.status(200).json("Se ha eliminado el proveedor correctamente")
   } catch (err) {
     console.log(err);
-    res.status(401).json("Ha ocurrido un error.")
+    res.status(401).json("Ha ocurrido un error inesperado.")
   }
 }
 export {
