@@ -3,6 +3,12 @@ import db from '../config/db.js';
 import Usuario from './usuario.js';
 import TipoPago from './tipoPago.js';
 import Libro from './libros.js';
+import {
+  totalVenta
+} from '../hooks/afterBulkCreate.js';
+import {
+  importeVenta
+} from '../hooks/beforeBulkCreate.js';
 
 const NotaVenta = db.define('nota_venta',{
   fecha: {
@@ -105,26 +111,14 @@ const DetalleVenta = db.define('detalle_ventas',{
   timestamps: false,
   hooks:{
     beforeBulkCreate:[
-      async function (instancia){
-        await Promise.all(instancia.map(async (detalleVenta)=>{
-          const libro = await Libro.findByPk(detalleVenta.libroId,{
-            attributes: ['precio']
-          });
-          detalleVenta.precio= libro.precio;
-          const total = detalleVenta.precio * detalleVenta.cantidad;
-          detalleVenta.importe = total - (total * detalleVenta.descuento);
-        }))
-      }
+      importeVenta,
+      
     ],       
-    afterBulkCreate: async function(instancia){
-      await Promise.all(instancia.map(async (detalleVenta)=>{
-        const totalNuevo  = detalleVenta.importe;
-        await NotaVenta.increment('total', { by: totalNuevo, where: { id: detalleVenta.notaVentaId } });
-      }))
-    },
+    afterBulkCreate: [
+      totalVenta
+    ]
   },
 })
-
 DetalleVenta.sync()
     .then(() => {
         console.log('Modelo actualizado exitosamente');
