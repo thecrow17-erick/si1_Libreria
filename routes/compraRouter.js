@@ -28,9 +28,8 @@ router.post('/',[
 ] ,postCompra)
 
 router.delete('/:id',[
+  validarJwt,
   check('id').custom(validarCompra),
-  check('correo','No es un correo').notEmpty().isEmail(),
-  check('password', 'Ingrese una contraseña correcta').notEmpty().isString().isLength({min: 8}),
   validarCampos
 ],deleteCompra)
 

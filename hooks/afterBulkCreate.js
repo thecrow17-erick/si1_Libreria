@@ -1,5 +1,6 @@
 import {
   Inventario,
+  NotaCompra,
   NotaVenta
 } from '../models/index.js';
 
@@ -17,6 +18,23 @@ const totalVenta = async(instancia = [])=>{
     throw new Error('Ha ocurrido un error en el total de la venta')
   }
 }
+//total de la compra en la nota de compra
+const totalCompra =async(instancia = [])=>{
+  try {
+    for(const detalle_compra of instancia){
+      await NotaCompra.increment('total',{
+        by: parseFloat(detalle_compra.importe),
+        where: {
+          id: detalle_compra.NotaCompraId
+        }
+      })
+    }
+  } catch (err) {
+    console.log(err);
+    throw new Error('Ha ocurrido un error en el total de la compra')
+  }
+}
+
 //resta los libros del inventario, si el libro no tiene suficiente stock manda un error
 const restarInventarioVenta = async(instancia = [])=>{
   try {
@@ -38,8 +56,26 @@ const restarInventarioVenta = async(instancia = [])=>{
   }
 }
 
+//aumenta el inventario con cada compra
+const sumarInventarioCompra = async(instancia = [])=>{
+  try {
+    for(const detalle_compra of instancia){
+      await Inventario.increment('cantidad',{
+        by: detalle_compra.cantidad,
+        where: {
+          libroId: detalle_compra.libroId
+        }
+      })      
+    }
+  } catch (err) {
+    console.log(err);
+    throw new Error('Hubo un error en el aumento del inventario')
+  }
+}
 
 export {
   totalVenta,
+  totalCompra,
   restarInventarioVenta,
+  sumarInventarioCompra
 }

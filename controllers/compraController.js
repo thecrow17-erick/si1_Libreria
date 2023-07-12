@@ -119,31 +119,20 @@ const postCompra = async(req=request, res=response)=>{
   }
 }
 const deleteCompra = async(req=request, res=response)=>{
-  const {correo, password} = req.body;
+  const {usuario} = req;
   const {id} = req.params;
   try {
-    const adminDB = await Usuario.findOne({where: {correo , estado: true},include:[{
-      model: Rol,
-      where: {
-        nombre: 'Administrador'
-      } 
-    }]});
-    if(!adminDB){
-      return res.status(401).json({
-        msg: "El usuario no es administrador"
-      })
-    }
-    const validarPassword = await adminDB.verificarPassword(password);
-    if(!validarPassword){
-      return res.status(401).json('El password es incorrecto')
+    const admin = usuario.role.nombre;
+    if(admin !== "Administrador"){
+      return res.status(400).json("El usuario no es administrador para borrar la compra")
     }
 
     //elimino la nota de compra 
     await Promise.all([
-      DetalleCompra.destroy({where:{
-        NotaCompraId: id
-      },
-      individualHooks: true
+      DetalleCompra.destroy({
+        where:{
+          NotaCompraId: id,
+        }
       }),
       NotaCompra.destroy({
         where: {id}

@@ -2,6 +2,7 @@ import {
   Libro,
 } from '../models/index.js';
 
+//para que el importe de la compra se haga automatico
 const importeVenta = async(instancia = [])=>{
   try {
     for (const detalle_venta of instancia) {
@@ -15,7 +16,18 @@ const importeVenta = async(instancia = [])=>{
     throw new Error('Error al crear el detalle de venta')    
   }
 }
-
+//importe de la compra
+const importeCompra = (instancia = [])=>{
+  try {
+    for(const detalle_compra of instancia){
+      detalle_compra.importe = detalle_compra.precio * detalle_compra.cantidad;
+    }
+  } catch (err) {
+    console.log(err);
+    throw new Error('No se puede calcular el importe')
+  }
+}
 export{
-  importeVenta
+  importeVenta,
+  importeCompra
 }

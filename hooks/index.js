@@ -1,13 +1,16 @@
 import {
   restarInventarioVenta,
-  totalVenta
+  totalVenta,
+  totalCompra
 } from './afterBulkCreate.js';
 
 import {
-  importeVenta
+  importeVenta,
+  importeCompra
 } from './beforeBulkCreate.js';
 import {
-  sumarInventarioVenta
+  sumarInventarioVenta,
+  restarInventarioCompra
 } from './beforeBulkDestroy.js';
 
 
@@ -15,5 +18,8 @@ export {
   restarInventarioVenta,
   totalVenta,
   importeVenta,
-  sumarInventarioVenta
+  sumarInventarioVenta,
+  importeCompra,
+  totalCompra,
+  restarInventarioCompra
 }
