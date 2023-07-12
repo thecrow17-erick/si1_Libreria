@@ -6,7 +6,7 @@ import { fechaActual, horaActual } from '../helpers/FechaHora.js';
 
 //te da todas las compras - paginacion - totales - publico
 const getCompras = async(req=request, res=response)=>{
-  let {limit = 5, offset = 0} = req.query;
+  let {limit = 10, offset = 0} = req.query;
   limit = parseInt(limit);
   offset = parseInt(offset);
   try {

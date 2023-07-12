@@ -5,7 +5,9 @@ import { v4 as uuidv4} from 'uuid';
 
 //muestra todos los libros - total - paginado
 const getLibros = async(req=request, res=response)=>{
-    const { limit = 5, offset = 0} = req.query;
+    let { limit = 10, offset = 0} = req.query;
+    limit = parseInt(limit);
+    offset = parseInt(offset);
     const [total, usuarios] = await Promise.all([
         Libro.count({where:{estado : true}}),
         Libro.findAll({

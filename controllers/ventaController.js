@@ -16,7 +16,9 @@ import {
 
 //muestra todas las ventas
 const getVentas = async(req= request, res=response)=>{
-  const { limit = 5, offset = 0} = req.query;
+  let { limit = 10, offset = 0} = req.query;
+  limit=parseInt(limit);
+  offset=parseInt(offset)  
   try {
     const [total, ventas] = await Promise.all([
       NotaVenta.count(),

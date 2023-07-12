@@ -4,8 +4,7 @@ import {Rol, Usuario} from '../models/index.js';
 
 //mostrar todos los usuarios - totales - paginado
 const getUsuarios = async(req = request,res= response)=>{
-    let { limit = 5, offset = 0} = req.query;
-    console.log(limit,offset);
+    let { limit = 10, offset = 0} = req.query;
     limit = parseInt(limit);
     offset = parseInt(offset);
     const [total , usuarios] = await Promise.all([
