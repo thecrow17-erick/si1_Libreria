@@ -140,7 +140,7 @@ const postVenta =async(req=request,res= response)=>{
       detalleVenta,
       msg: "Se ha realizado con exito la funcion"
     })
-
+    
   } catch (err) {
     console.log(err);
     res.status(400).json({
@@ -151,29 +151,20 @@ const postVenta =async(req=request,res= response)=>{
 
 //elimina una venta y sus detalles,
 const deleteVenta = async(req=request,res=response)=>{
-  const {correo, password} = req.body;
+  const {usuario} = req;
   const {id} = req.params;
   try {
-    const adminDB = await Usuario.findOne({where: {correo , estado: true},include:[{
-      model: Rol,
-      where: {
-        nombre: 'Administrador'
-      } 
-    }]});
-    if(!adminDB){
-      return res.status(401).json({
-        msg: "El usuario no es administrador"
-      })
-    }
-    const validarPassword = await adminDB.verificarPassword(password);
-    if(!validarPassword){
-      return res.status(401).json('El password es incorrecto')
+    //verifico si el usuario es administrador
+    const administrador = usuario.role.nombre;
+    if(administrador !== "Administrador"){
+      return res.status(401).json("el usuario no es administrador")
     }
     //elimino tanto de detalles y despues de notas
     await Promise.all([
       DetalleVenta.destroy({where:{
         notaVentaId: id
-      }}),
+      }
+      }),
       NotaVenta.destroy({
         where: {id}
       })
@@ -183,7 +174,6 @@ const deleteVenta = async(req=request,res=response)=>{
     console.log(err);
     res.status(400).json("Ha ocurrido un error")    
   }
-
 }
 const tiposPagos = async(req, res= response)=>{
   try {

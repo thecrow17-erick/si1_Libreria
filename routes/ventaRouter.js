@@ -33,9 +33,8 @@ router.post('/', [
 
 //elimina una venta del registro
 router.delete('/:id',[
+  validarJwt,
   check('id').custom(validarVenta),
-  check('correo','No es un correo').notEmpty().isEmail(),
-  check('password', 'Ingrese una contraseña correcta').notEmpty().isString().isLength({min: 8}),
   validarCampos
 ],deleteVenta)
 //los diferentes tipos de pagos
