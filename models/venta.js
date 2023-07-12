@@ -1,14 +1,15 @@
 import {DataTypes} from 'sequelize';
+
 import db from '../config/db.js';
 import Usuario from './usuario.js';
 import TipoPago from './tipoPago.js';
 import Libro from './libros.js';
 import {
-  totalVenta
-} from '../hooks/afterBulkCreate.js';
-import {
-  importeVenta
-} from '../hooks/beforeBulkCreate.js';
+  importeVenta,
+  restarInventarioVenta,
+  totalVenta,
+  sumarInventarioVenta
+} from '../hooks/index.js';
 
 const NotaVenta = db.define('nota_venta',{
   fecha: {
@@ -112,10 +113,13 @@ const DetalleVenta = db.define('detalle_ventas',{
   hooks:{
     beforeBulkCreate:[
       importeVenta,
-      
+      restarInventarioVenta
     ],       
     afterBulkCreate: [
       totalVenta
+    ],
+    beforeBulkDestroy:[
+      sumarInventarioVenta
     ]
   },
 })
