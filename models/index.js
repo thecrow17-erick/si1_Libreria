@@ -70,8 +70,8 @@ NotaVenta.belongsTo(Usuario,{
     },
     as: 'vendedor'
 });
-//relacion de 1 a muchos, libro  -> inventario
-Libro.hasMany(Inventario, {
+//relacion de 1 a 1, libro  -> inventario
+Libro.hasOne(Inventario, {
     foreignKey: {
         name: 'libroId',
         allowNull: false

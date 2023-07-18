@@ -16,6 +16,10 @@ import {
   eliminarDetallesCompra
 } from './beforeDestroy.js';
 
+import {
+  crearInventario
+} from './afterCreate.js';
+
 
 export {
   restarInventarioVenta,
@@ -27,5 +31,6 @@ export {
   importeCompra,
   totalCompra,
   restarInventarioCompra,
-  sumarInventarioCompra
+  sumarInventarioCompra,
+  crearInventario
 }

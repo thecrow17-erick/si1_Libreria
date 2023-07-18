@@ -1,6 +1,9 @@
 import {DataTypes} from 'sequelize';
 import db from '../config/db.js';
 import {Categoria,Autor,Editorial} from './index.js';
+import { 
+    crearInventario
+} from '../hooks/index.js';
 
 
 const Libro = db.define('Libros',{
@@ -40,6 +43,12 @@ const Libro = db.define('Libros',{
             key: 'id'
         }
     },
+},{
+    hooks:{
+        afterCreate:[
+            crearInventario
+        ]
+    }
 })
 Libro.sync()
     .then(() => {

@@ -14,13 +14,18 @@ const getLibros = async(req=request, res=response)=>{
             limit,
             offset,
             attributes:['id','titulo','fecha_publicacion','precio'],
-            include: [{
-                model: Categoria,
-                attributes: ['id', 'nombre']
-            },{
-                model: Editorial,
-                attributes: ['id', 'nombre']
-            }],
+            include: [
+                {
+                    model: Categoria,
+                    attributes: ['id', 'nombre']
+                },{
+                    model: Editorial,
+                    attributes: ['id', 'nombre']
+                },{
+                    model: Inventario,
+                    attributes: ['cantidad']
+                }
+            ],
             where: {estado: true}
         })
     ])
@@ -37,19 +42,24 @@ const getLibro = async(req=request, res=response)=>{
     try {
         const libroBD = await Libro.findByPk(id, {
             attributes: ['id', 'titulo', 'fecha_publicacion','precio', 'img'],
-            include: [{
-                model: Categoria,
-                attributes: ['id', 'nombre']
-            },{
-                model: Editorial,
-                attributes: ['id', 'nombre']
-            },{
-                model: Autor,
-                attributes: ['id','nombre'],
-                through: {
-                    attributes: []
+            include: [
+                {
+                    model: Categoria,
+                    attributes: ['id', 'nombre']
+                },{
+                    model: Editorial,
+                    attributes: ['id', 'nombre']
+                },{
+                    model: Autor,
+                    attributes: ['id','nombre'],
+                    through: {
+                        attributes: []
+                    }
+                },{
+                    model: Inventario,
+                    attributes: ['cantidad']
                 }
-            }]
+            ]
         })
         //busca la imagen
         const imageUrl = getFileUrlFromBlobStorage(libroBD.img);
@@ -114,10 +124,6 @@ const postLibro = async(req=request, res=response)=>{
         //lo subo a mi blob storage en azure
         const resp = await postImageBlobStorage( imgName, imgPath);
         console.log(resp);
-        const inventario = await Inventario.create({
-            libroId: libro.id
-        })
-        console.log(inventario);
         return res.status(200).json(`Se ha creado correctamente el libro ${data.titulo}`)
     } catch (err) {
         console.log(err);
