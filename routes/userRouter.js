@@ -31,7 +31,6 @@ router.post('/',[
 ], postUsuarios);
 //privado - actualizar usuarios 
 router.put('/:id',[
-    check('id').custom(validarUser).notEmpty(),
     check('nombre','El nombre es obligatorio').notEmpty(),
     check('correo', 'Ingrese un correo valido.').isEmail().notEmpty(),
     check('telefono','Ingrese un numero de telefono valido.').isLength({min: 8, max: 10 }).notEmpty().isNumeric(),
@@ -41,7 +40,7 @@ router.put('/:id',[
 
 //privado - eliminar usuarios
 router.delete('/:id',[
-    check('id').custom(validarUser).notEmpty(),
+    check('id').custom(validarUser),
     validarCampos
 ],deleteUsuarios)
 export default router;

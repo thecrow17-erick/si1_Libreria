@@ -62,17 +62,6 @@ const getToken = async(req = request, res = response)=>{
 //crear usuario - privado(aun no implementado)
 const postUsuarios = async (req = request,res= response)=>{
     const {nombre, correo, password, telefono, rolId} = req.body;
-    const usuarioDB = await Usuario.findOne({
-        where: or({
-            nombre,
-            correo
-        })
-    });
-    if(usuarioDB){
-        return res.status(400).json({
-            msg: `La cuenta ${nombre} o ${correo} ya existe en el sistema`
-        })
-    };
     const data = {
         nombre,
         correo,
@@ -81,6 +70,17 @@ const postUsuarios = async (req = request,res= response)=>{
         rolId
     }
     try {
+        const usuarioDB = await Usuario.findOne({
+            where: or({
+                nombre,
+                correo
+            })
+        });
+        if(usuarioDB){
+            return res.status(400).json({
+                msg: `El usuario ${nombre} de correo ${correo} ya existe en el sistema`
+            })
+        };
         const usuario  = await Usuario.create(data)
         console.log(usuario);
         return res.status(200).json(`El usuario ${nombre} ha sido registrado con exito`)
@@ -96,6 +96,13 @@ const postUsuarios = async (req = request,res= response)=>{
 const putUsuarios = async(req = request, res = response)=>{
     const {id} = req.params;
     const {nombre, correo, telefono,rolId} = req.body;
+    //actualizo los objetos
+    const obj = {
+        nombre,
+        correo,
+        telefono,
+        rolId
+    }
     try {
         const user = await Usuario.findByPk(id);
         //verificamos si el email no esta ocuapdo
@@ -107,16 +114,10 @@ const putUsuarios = async(req = request, res = response)=>{
         })       
         if(userDB){
             return res.status(400).json({
-                msg: `El nombre  ${nombre} o ${correo} estan siendo ya usados`
+                msg: `El usuario  ${nombre} de ${correo} estan siendo ya usados`
             })
         }
-        //actualizo los objetos
-        const obj = {
-            nombre,
-            correo,
-            telefono,
-            rolId
-        }
+        
         //
         //actualizamos el usuario
         await user.update(obj,{
@@ -124,7 +125,7 @@ const putUsuarios = async(req = request, res = response)=>{
         })
 
         res.status(200).json({
-            msg: "Ha sido actualizado correctamente"
+            msg: `El usuario ${user.nombre} ha sido actualizado correctamente`
         })
     } catch (err) {
         console.log(err);

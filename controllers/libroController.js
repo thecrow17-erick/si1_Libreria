@@ -180,9 +180,7 @@ const putLibro = async(req=request, res=response)=>{
         const resp = await postImageBlobStorage( imgName, imgPath);
         console.log(resp);
         return res.status(200).json({
-            msg: `Se ha actualizado correctamente el libro ${libro.titulo}`,
-            libro,
-            autoresLibro
+            msg: `Se ha actualizado correctamente el libro ${libro.titulo}`
         })
     } catch (err) {
         console.log(err);
