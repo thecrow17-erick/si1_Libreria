@@ -109,9 +109,8 @@ const postLibro = async(req=request, res=response)=>{
             return res.status(400).json("La extension no es permitida")
         }
         //el uuid que ira en la db como img
-        let imgName =  uuidv4();
+        const imgName =  uuidv4()+'.' +extension;
         data.img = imgName;
-        imgName +='.' +extension;
         const imgPath = img.tempFilePath;
         //creo un nuevo libro en la db
         const libro = await Libro.create(data);
