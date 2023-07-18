@@ -4,6 +4,9 @@ import libroRouter from './libroRouter.js';
 import ventaRouter from './ventaRouter.js';
 import proveedorRouter from './proveedorRouter.js';
 import compraRouter from './compraRouter.js';
+import bitacoraRouter from './bitacoraRouter.js';
+import categoriaRouter from './categoriaRouter.js';
+import rolRouter from './rolRouter.js';
 
 export {
     userRouter,
@@ -11,5 +14,8 @@ export {
     libroRouter,
     ventaRouter,
     proveedorRouter,
-    compraRouter
+    compraRouter,
+    bitacoraRouter,
+    categoriaRouter,
+    rolRouter
 }

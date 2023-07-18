@@ -50,7 +50,9 @@ const postProveedor = async(req=request, res=response)=>{
       direccion,
       telefono
     };
-    const proveedor = await Proveedor.create(obj);
+    const proveedor = await Proveedor.create(obj,{
+      usuario: 'Erick'
+    });
     res.status(200).json({
       proveedor,
       msg: "Se ha creado correctamente un proveedor"

@@ -1,5 +1,8 @@
 import azure from 'azure-storage';
 import { config } from 'dotenv';
+import moment from 'moment';
+import { fechaActual } from '../helpers/FechaHora.js';
+
 
 config({ path: '.env' });
 
@@ -26,6 +29,26 @@ const postImageBlobStorage = ( fileName, filePath) => {
     );
   });
 };
+const getFileUrlFromBlobStorage = (fileName) => {
+  const startDate = new Date();
+  startDate.setHours(startDate.getHours() - 4)
+  const expiryDate = new Date(startDate.getTime() + 4 * 60 * 60 * 1000); // Agrega 4 horas al tiempo actual
 
+  const sharedAccessPolicy = {
+    AccessPolicy: {
+      Permissions: azure.BlobUtilities.SharedAccessPermissions.READ,
+      Start: startDate.toISOString(),
+      Expiry: expiryDate.toISOString()
+    }
+  };
+  console.log(sharedAccessPolicy);
+
+  const sasToken = blobService.generateSharedAccessSignature('imagenes', fileName, sharedAccessPolicy);
+
+  return blobService.getUrl('imagenes', fileName, sasToken);
+};
 export default blobService;
-export { postImageBlobStorage };
+export { 
+  postImageBlobStorage,
+  getFileUrlFromBlobStorage
+};

@@ -22,6 +22,12 @@ const Proveedor = db.define('proveedores',{
     type: DataTypes.BOOLEAN,
     defaultValue: true
   }
+},{
+  hooks: {
+    beforeCreate: function(proveedor, options){
+        console.log(options);
+      }
+  }
 })
 
 export default Proveedor;

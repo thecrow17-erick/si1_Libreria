@@ -3,7 +3,7 @@ import {check} from 'express-validator';
 import {deleteLibro, getLibro, getLibros, postLibro, putLibro} from '../controllers/libroController.js';
 import { validarCampos } from '../middlewares/validarCampos.js';
 import { validarLibro } from '../helpers/dbValidator.js';
-import { validarAutores, validarCategoria, validarEditorial } from '../middlewares/validarDB.js';
+import { validarAutores, validarEditorial } from '../middlewares/validarDB.js';
 
 const router = Router();
 
@@ -20,9 +20,9 @@ router.get('/:id',[
 router.post('/',[
     check('titulo','Ponga un nombre valido').notEmpty().isString(),
     check('precio','Ponga un numero razonable').notEmpty().isDecimal({decimal_digits: 2}),
+    check('categoriaId', 'Debe ser una categoria valida').notEmpty().isNumeric(),
     check('fecha_publicacion', 'Ponga una fecha valida').notEmpty().isDate({format: 'YYYY-MM-DD'}),
     validarAutores,
-    validarCategoria,
     validarEditorial,
     validarCampos
 ],postLibro);

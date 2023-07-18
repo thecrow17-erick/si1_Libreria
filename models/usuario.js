@@ -38,8 +38,11 @@ const Usuario = db.define('usuarios',{
         beforeCreate : async function(usuario) {
                 const salt = await bcrypt.genSalt(10);
                 usuario.password = await bcrypt.hash(usuario.password, salt);
-            }
-        } 
+            },
+        beforeUpdate: function(usuario, options){
+            console.log(options);
+        }        
+    },
 });
 
 Usuario.prototype.verificarPassword = function(password){

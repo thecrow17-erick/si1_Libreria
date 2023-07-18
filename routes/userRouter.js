@@ -26,15 +26,16 @@ router.post('/',[
     check('password','La contraseña es obligatorio.').isLength({min : 8}).notEmpty(),
     check('correo', 'Ingrese un correo valido.').isEmail().notEmpty(),
     check('telefono','Ingrese un numero de telefono valido.').isLength({min: 8, max: 10 }).notEmpty().isNumeric(),
+    check('rolId').custom(validarRol).notEmpty(),
     validarCampos
 ], postUsuarios);
 //privado - actualizar usuarios 
 router.put('/:id',[
+    check('id').custom(validarUser).notEmpty(),
     check('nombre','El nombre es obligatorio').notEmpty(),
     check('correo', 'Ingrese un correo valido.').isEmail().notEmpty(),
     check('telefono','Ingrese un numero de telefono valido.').isLength({min: 8, max: 10 }).notEmpty().isNumeric(),
     check('rolId').custom(validarRol).notEmpty(),
-    check('id').custom(validarUser).notEmpty(),
     validarCampos
 ],putUsuarios);
 

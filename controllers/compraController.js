@@ -62,6 +62,13 @@ const getCompra = async(req=request, res=response)=>{
         }
       ]
     });
+
+    const detalle = await DetalleCompra.findAll({
+      where: {
+        NotaCompraId: id
+      }
+    })
+    console.log(detalle);
     res.status(200).json({
       notaCompra
     })
@@ -122,22 +129,14 @@ const deleteCompra = async(req=request, res=response)=>{
   const {usuario} = req;
   const {id} = req.params;
   try {
+    const compra = await NotaCompra.findByPk(id);
+    //verifico si elimina algun admin
     const admin = usuario.role.nombre;
     if(admin !== "Administrador"){
       return res.status(400).json("El usuario no es administrador para borrar la compra")
     }
-
     //elimino la nota de compra 
-    await Promise.all([
-      DetalleCompra.destroy({
-        where:{
-          NotaCompraId: id,
-        }
-      }),
-      NotaCompra.destroy({
-        where: {id}
-      })
-    ]);
+    await compra.destroy();
     res.status(200).json("Se ha eliminado correctamente la compra.")
   } catch (err) {
     console.log(err);

@@ -5,6 +5,10 @@ const Categoria = db.define('categorias',{
     nombre: {
         type: DataTypes.STRING(100),
         allowNull: false
+    },
+    estado:{
+        type: DataTypes.BOOLEAN,
+        defaultValue: true
     }
 },{
     timestamps: false

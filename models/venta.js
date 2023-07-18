@@ -8,7 +8,8 @@ import {
   importeVenta,
   restarInventarioVenta,
   totalVenta,
-  sumarInventarioVenta
+  sumarInventarioVenta,
+  eliminarDetallesVenta
 } from '../hooks/index.js';
 
 const NotaVenta = db.define('nota_venta',{
@@ -55,7 +56,13 @@ const NotaVenta = db.define('nota_venta',{
     onUpdate: 'CASCADE'
   }
 },{
-  timestamps: false
+  timestamps: false,
+  hooks: {
+    beforeDestroy: [
+      sumarInventarioVenta,
+      eliminarDetallesVenta
+    ]
+  }
 })
 
 
@@ -117,9 +124,6 @@ const DetalleVenta = db.define('detalle_ventas',{
     ],       
     afterBulkCreate: [
       totalVenta
-    ],
-    beforeBulkDestroy:[
-      sumarInventarioVenta
     ]
   },
 })

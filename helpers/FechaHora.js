@@ -8,6 +8,7 @@ const day = currentDate.getDate();
 
 const fecha = moment(`${year}-${month}-${day}`,'YYYY-MM-DD');
 const fechaActual = fecha.format('YYYY-MM-DD');
+
 const hour = currentDate.getHours();
 const minute = currentDate.getMinutes();
 const second = currentDate.getSeconds();

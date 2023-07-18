@@ -1,6 +1,6 @@
 import {request,response} from 'express';
 import {Rol, Usuario} from '../models/index.js';
-
+import {or} from 'sequelize';
 
 //mostrar todos los usuarios - totales - paginado
 const getUsuarios = async(req = request,res= response)=>{
@@ -62,7 +62,12 @@ const getToken = async(req = request, res = response)=>{
 //crear usuario - privado(aun no implementado)
 const postUsuarios = async (req = request,res= response)=>{
     const {nombre, correo, password, telefono, rolId} = req.body;
-    const usuarioDB = await Usuario.findOne({where: {nombre } || {correo}});
+    const usuarioDB = await Usuario.findOne({
+        where: or({
+            nombre,
+            correo
+        })
+    });
     if(usuarioDB){
         return res.status(400).json({
             msg: `La cuenta ${nombre} o ${correo} ya existe en el sistema`
@@ -92,27 +97,38 @@ const putUsuarios = async(req = request, res = response)=>{
     const {id} = req.params;
     const {nombre, correo, telefono,rolId} = req.body;
     try {
-        const user = await Usuario.findByPk(id, {
-            attributes: ['id','nombre','correo','telefono']
-        });
-        await Promise.all([ 
-            user.update({
-                nombre, 
-                correo, 
-                telefono,
-                rolId
-            }),
-            await user.save()
-        ])
-        return res.status(200).json({
-            user,
-            msg: "Se ha cambiado correctamente los datos"
+        const user = await Usuario.findByPk(id);
+        //verificamos si el email no esta ocuapdo
+        const userDB = await Usuario.findOne({
+            where: or({
+                correo,
+                nombre
+            })
+        })       
+        if(userDB){
+            return res.status(400).json({
+                msg: `El nombre  ${nombre} o ${correo} estan siendo ya usados`
+            })
+        }
+        //actualizo los objetos
+        const obj = {
+            nombre,
+            correo,
+            telefono,
+            rolId
+        }
+        //
+        //actualizamos el usuario
+        await user.update(obj,{
+            usuario: 'erick'
+        })
+
+        res.status(200).json({
+            msg: "Ha sido actualizado correctamente"
         })
     } catch (err) {
-        console.log('Ha ocurrido un error inesperado', err);
-        return res.status(400).json({
-            msg: "Ha ocurrido un error, intente otra vez"
-        })
+        console.log(err);
+        res.status(401).json("Ha ocurrido un error.")
     }
 }
 
@@ -123,11 +139,8 @@ const deleteUsuarios = async(req = request, res = response)=>{
         const user = await Usuario.findByPk(id,{
             attributes: ['id','nombre','correo','telefono']
         })
-        await Promise.all([
-            user.update({estado: false}),
-            await user.save()
-        ])
-        return res.status(200).json({
+        user.update({estado: false}),
+        res.status(200).json({
             user,
             msg: "El usuario ha sido eliminado"
         });

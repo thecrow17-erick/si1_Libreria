@@ -1,4 +1,4 @@
-import {Libro, NotaVenta, Rol, TipoPago, Usuario ,Proveedor , NotaCompra} from '../models/index.js';
+import {Libro, NotaVenta, Rol, TipoPago, Usuario ,Proveedor , NotaCompra, Categoria} from '../models/index.js';
 
 
 const validarRol = async(rolId = Number)=>{
@@ -43,6 +43,13 @@ const validarCompra = async(id= Number)=>{
         throw new Error('No es una compra')
     }
 }
+const validarCategoria = async(id =Number)=>{
+    const categoriaDB = await Categoria.findByPk(id);
+    if(!categoriaDB){
+        throw new Error('No es una categoria')
+    }
+}
+
 export {
     validarUser,
     validarRol,
@@ -50,5 +57,6 @@ export {
     validarVenta,
     validarPago,
     validarCompra,
-    validarProveedor
+    validarProveedor,
+    validarCategoria
 }

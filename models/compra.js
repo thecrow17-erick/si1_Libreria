@@ -7,9 +7,10 @@ import Usuario from './usuario.js';
 import {
   importeCompra,
   totalCompra,
-  restarInventarioCompra
+  restarInventarioCompra,
+  sumarInventarioCompra,
+  eliminarDetallesCompra
 } from '../hooks/index.js'
-import { sumarInventarioCompra } from '../hooks/afterBulkCreate.js';
 
 const NotaCompra = db.define('nota_compra',{
   fecha:{
@@ -41,7 +42,13 @@ const NotaCompra = db.define('nota_compra',{
     }
   }
 },{
-  timestamps: false
+  timestamps: false,
+  hooks:{
+    beforeDestroy:[
+      restarInventarioCompra,
+      eliminarDetallesCompra
+    ]
+  }
 })
 NotaCompra.sync()
     .then(() => {
@@ -93,10 +100,7 @@ const DetalleCompra = db.define('detalle_compra',{
     afterBulkCreate: [
       totalCompra,
       sumarInventarioCompra
-    ],
-    beforeBulkDestroy: [
-        restarInventarioCompra
-    ],
+    ]
   }
 })
 

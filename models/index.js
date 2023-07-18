@@ -9,6 +9,7 @@ import NotaVenta, {DetalleVenta} from './venta.js';
 import Proveedor from './proveedor.js';
 import NotaCompra,{DetalleCompra} from './compra.js';
 import Inventario from './inventario.js';
+import Bitacora from './bitacora.js';
 import Server from './server.js';
 
 
@@ -135,6 +136,19 @@ NotaCompra.belongsTo(Usuario, {
         allowNull: false
     }
 });
+//relacion de unos a muchos, usuario -> nota_compra
+Usuario.hasMany(Bitacora,{
+    foreignKey:{
+        name: 'usuarioId',
+        allowNull: false
+    }
+});
+Bitacora.belongsTo(Usuario,{
+    foreignKey:{
+        name: 'usuarioId',
+        allowNull: false
+    }
+})
 //relacion de muchos a muchos -> autor y categoria
 Libro.belongsToMany(Autor, { through: LibroAutor ,foreignKey:{
     name: 'libroId',
@@ -162,6 +176,7 @@ NotaCompra.belongsToMany(Libro, { through: DetalleCompra , foreignKey:{
     name: 'NotaCompraId',
     allowNull: false
 }});
+
 export {
     Rol,
     Usuario,
@@ -178,6 +193,7 @@ export {
     Proveedor,
     NotaCompra,
     DetalleCompra,
-    Inventario
+    Inventario,
+    Bitacora
 }
 export default Server;

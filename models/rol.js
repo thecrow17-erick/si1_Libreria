@@ -7,6 +7,10 @@ const Rol = db.define('roles',{
         type: DataTypes.STRING(40),
         allowNull: false,
     },
+    estado:{
+        type: DataTypes.BOOLEAN,
+        defaultValue: true
+    }
 },{
     timestamps: false
 }); 

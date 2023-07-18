@@ -4,7 +4,17 @@ import fileUpload from 'express-fileupload';
 import {Server as SocketIo} from 'socket.io';
 import http from 'http';
 
-import {userRouter, authRouter,libroRouter,ventaRouter, proveedorRouter,compraRouter} from '../routes/index.js';
+import {
+    userRouter, 
+    authRouter,
+    libroRouter,
+    ventaRouter, 
+    proveedorRouter,
+    compraRouter,
+    bitacoraRouter,
+    categoriaRouter,
+    rolRouter
+} from '../routes/index.js';
 import {buscarLibro} from '../sockets/fetchBook.js';
 import db from '../config/db.js';
 
@@ -24,7 +34,10 @@ class server {
             libros: '/api/libro',
             ventas: '/api/venta',
             compras: '/api/compra',
-            proveedor: '/api/proveedor'
+            proveedor: '/api/proveedor',
+            bitacora: '/api/bitacora',
+            categoria: '/api/categoria',
+            rol: '/api/rol'
         }
         //middlewares
         this.middlewares();
@@ -51,6 +64,12 @@ class server {
         this.app.use(this.path.proveedor, proveedorRouter);
         //compra de libros
         this.app.use(this.path.compras, compraRouter);
+        //bitacora
+        this.app.use(this.path.bitacora, bitacoraRouter);
+        //categoria
+        this.app.use(this.path.categoria, categoriaRouter);
+        //roles
+        this.app.use(this.path.rol, rolRouter)
     }
 
     //sockets

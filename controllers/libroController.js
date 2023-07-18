@@ -1,6 +1,6 @@
 import {request,response} from 'express';
 import { Autor, Categoria, Editorial, Inventario, Libro, LibroAutor } from '../models/index.js';
-import {postImageBlobStorage} from '../config/azureBlobStorage.js';
+import {postImageBlobStorage ,getFileUrlFromBlobStorage} from '../config/azureBlobStorage.js';
 import { v4 as uuidv4} from 'uuid';
 
 //muestra todos los libros - total - paginado
@@ -36,7 +36,7 @@ const getLibro = async(req=request, res=response)=>{
     const {id} = req.params;
     try {
         const libroBD = await Libro.findByPk(id, {
-            attributes: ['id', 'titulo', 'fecha_publicacion','precio'],
+            attributes: ['id', 'titulo', 'fecha_publicacion','precio', 'img'],
             include: [{
                 model: Categoria,
                 attributes: ['id', 'nombre']
@@ -51,6 +51,13 @@ const getLibro = async(req=request, res=response)=>{
                 }
             }]
         })
+        //busca la imagen
+        const imageUrl = getFileUrlFromBlobStorage(libroBD.img);
+        console.log(imageUrl);
+
+        libroBD.img = imageUrl;
+
+        //pregunto la imagen
         res.status(200).json({
             libro: libroBD,
             msg: 'Se ha mostrado con exito el libro solicitado'
@@ -64,12 +71,12 @@ const getLibro = async(req=request, res=response)=>{
 }
 //crea datos de un libro
 const postLibro = async(req=request, res=response)=>{
-    const {titulo,precio,fecha_publicacion} = req.body;
+    const {titulo,precio,fecha_publicacion,categoriaId} = req.body;
     const data = {
         titulo,
         precio,
         fecha_publicacion,
-        categoriaId: req.categoria,
+        categoriaId,
         editorialId: req.editorial
     }
     const autores = req.autores;
@@ -92,11 +99,10 @@ const postLibro = async(req=request, res=response)=>{
             return res.status(400).json("La extension no es permitida")
         }
         //el uuid que ira en la db como img
-        const imgName =  uuidv4()+'.' +extension;
- 
-        const imgPath = img.tempFilePath;
-        //guardo el dato para la db
+        let imgName =  uuidv4();
         data.img = imgName;
+        imgName +='.' +extension;
+        const imgPath = img.tempFilePath;
         //creo un nuevo libro en la db
         const libro = await Libro.create(data);
         //crea un arreglo de objetos del libro y sus autores
