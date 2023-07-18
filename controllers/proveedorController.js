@@ -1,5 +1,6 @@
 import {request,response} from 'express';
 import { Proveedor } from '../models/index.js';
+import { or } from 'sequelize';
 
 
 const getProveedores = async(req=request, res=response)=>{
@@ -43,13 +44,22 @@ const getProveedor = async(req=request, res=response)=>{
 }
 const postProveedor = async(req=request, res=response)=>{
   const {nombre, correo, direccion, telefono} = req.body;
+  const obj = {
+    nombre, 
+    correo,
+    direccion,
+    telefono
+  };
   try {
-    const obj = {
-      nombre, 
-      correo,
-      direccion,
-      telefono
-    };
+    const proveedorDB = await Proveedor.findOne({
+      where: or({
+        nombre,
+        correo
+      })
+    });
+    if(proveedorDB && proveedorDB.estado){
+      return res.status(200).json(`El proveedor ${nombre} ya se encuentra en el sistema`)
+    }
     const proveedor = await Proveedor.create(obj,{
       usuario: 'Erick'
     });
@@ -72,8 +82,7 @@ const putProveedor = async(req=request, res=response)=>{
     await proveedor.update(obj);
 
     res.status(200).json({
-      proveedor,
-      msg: "Se ha actualizado correctamente"
+      msg: `El proveedor ${proveedor.nombre} ha sido actualizado correctamente`
     })
   } catch (err) {
     console.log(err);
@@ -83,10 +92,9 @@ const putProveedor = async(req=request, res=response)=>{
 const deleteProveedor = async(req=request, res=response)=>{
   const {id} = req.params;
   try {
-    const proveedor = await Proveedor.findByPk(id,{});
-    if (proveedor) {
-      return res.status(400).json("El proveedor no se encuentra en el sistema.");
-    }
+    const proveedor = await Proveedor.findByPk(id);
+
+  
     await proveedor.update({
       estado: false
     })
