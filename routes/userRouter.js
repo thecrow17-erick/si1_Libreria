@@ -22,6 +22,7 @@ router.get('/:id',[
     validarCampos
 ],getUsuario)
 router.post('/',[
+    validarJwt,
     check('nombre','El nombre es obligatorio').notEmpty(),
     check('password','La contraseña es obligatorio.').isLength({min : 8}).notEmpty(),
     check('correo', 'Ingrese un correo valido.').isEmail().notEmpty(),
@@ -31,6 +32,7 @@ router.post('/',[
 ], postUsuarios);
 //privado - actualizar usuarios 
 router.put('/:id',[
+    validarJwt,
     check('nombre','El nombre es obligatorio').notEmpty(),
     check('correo', 'Ingrese un correo valido.').isEmail().notEmpty(),
     check('telefono','Ingrese un numero de telefono valido.').isLength({min: 8, max: 10 }).notEmpty().isNumeric(),
@@ -40,6 +42,7 @@ router.put('/:id',[
 
 //privado - eliminar usuarios
 router.delete('/:id',[
+    validarJwt,
     check('id').custom(validarUser),
     validarCampos
 ],deleteUsuarios)

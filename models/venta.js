@@ -9,7 +9,9 @@ import {
   restarInventarioVenta,
   totalVenta,
   sumarInventarioVenta,
-  eliminarDetallesVenta
+  eliminarDetallesVenta,
+  createBitacora,
+  createBitacoraDestroy
 } from '../hooks/index.js';
 
 const NotaVenta = db.define('nota_venta',{
@@ -60,7 +62,11 @@ const NotaVenta = db.define('nota_venta',{
   hooks: {
     beforeDestroy: [
       sumarInventarioVenta,
-      eliminarDetallesVenta
+      eliminarDetallesVenta,
+      createBitacoraDestroy
+    ],
+    afterCreate: [
+      createBitacora
     ]
   }
 })

@@ -2,6 +2,7 @@ import {DataTypes} from 'sequelize';
 import Rol from './rol.js';
 import db from '../config/db.js';
 import bcrypt from 'bcryptjs';
+import { createBitacora } from '../hooks/afterCreate.js';
 
 
 const Usuario = db.define('usuarios',{
@@ -41,7 +42,13 @@ const Usuario = db.define('usuarios',{
             },
         beforeUpdate: function(usuario, options){
             console.log(options);
-        }        
+        },
+        afterCreate:[
+            createBitacora
+        ],
+        afterUpdate:[
+            createBitacora
+        ]        
     },
 });
 

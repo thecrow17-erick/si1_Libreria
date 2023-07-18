@@ -9,7 +9,9 @@ import {
   totalCompra,
   restarInventarioCompra,
   sumarInventarioCompra,
-  eliminarDetallesCompra
+  eliminarDetallesCompra,
+  createBitacora,
+  createBitacoraDestroy
 } from '../hooks/index.js'
 
 const NotaCompra = db.define('nota_compra',{
@@ -46,7 +48,11 @@ const NotaCompra = db.define('nota_compra',{
   hooks:{
     beforeDestroy:[
       restarInventarioCompra,
-      eliminarDetallesCompra
+      eliminarDetallesCompra,
+      createBitacoraDestroy
+    ],
+    afterCreate:[
+      createBitacora
     ]
   }
 })

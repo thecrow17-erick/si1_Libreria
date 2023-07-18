@@ -52,6 +52,9 @@ const postRol = async(req=request, res=response)=>{
     if(rolDB && !rolDB.estado){
       await rolDB.update({
         estado: true
+      },{
+        actividad: 'Crear Rol',
+        usuarioId: req.usuario.id
       })
       return res.status(400).json(`El rol ${nombre} ya se encuentra disponible`)
     }
@@ -59,6 +62,9 @@ const postRol = async(req=request, res=response)=>{
     //creo si pasa todo lo atras
     await Rol.create({
       nombre
+    },{
+      actividad: 'Crear Rol',
+      usuarioId: req.usuario.id
     });
 
     res.status(200).json(`Se ha creado el rol ${nombre} correctamente`)
@@ -89,6 +95,9 @@ const putRol = async(req=request, res=response)=>{
     //actualizo el rol
     await rol.update({
       nombre
+    },{
+      actividad: 'Actualizar Rol',
+      usuarioId: req.usuario.id
     })
 
     res.status(200).json(`Se ha actualizado correctame el rol ${nombre}`)
@@ -109,6 +118,9 @@ const deleteRol = async(req=request, res=response)=>{
 
     await rol.update({
       estado: false
+    },{
+      actividad: 'Eliminar Rol',
+      usuarioId: req.usuario.id
     })
 
     res.status(200).json(`El rol ${rol.nombre} ha sido eliminado.`)

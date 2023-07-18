@@ -76,13 +76,15 @@ const postUsuarios = async (req = request,res= response)=>{
                 correo
             })
         });
-        if(usuarioDB){
+        if(usuarioDB && usuarioDB.estado){
             return res.status(400).json({
                 msg: `El usuario ${nombre} de correo ${correo} ya existe en el sistema`
             })
         };
-        const usuario  = await Usuario.create(data)
-        console.log(usuario);
+        await Usuario.create(data,{
+            actividad: 'Crear Usuario',
+            usuarioId: req.usuario.id
+        })
         return res.status(200).json(`El usuario ${nombre} ha sido registrado con exito`)
     } catch (error) {
         console.log('ha ocurrido un error inesperado',error);
@@ -121,7 +123,8 @@ const putUsuarios = async(req = request, res = response)=>{
         //
         //actualizamos el usuario
         await user.update(obj,{
-            usuario: 'erick'
+            actividad: 'Actualizar Usuario',
+            usuarioId: req.usuario.id
         })
 
         res.status(200).json({
@@ -137,13 +140,15 @@ const putUsuarios = async(req = request, res = response)=>{
 const deleteUsuarios = async(req = request, res = response)=>{
     const {id} = req.params;
     try {
-        const user = await Usuario.findByPk(id,{
-            attributes: ['id','nombre','correo','telefono']
-        })
-        user.update({estado: false}),
+        const user = await Usuario.findByPk(id)
+        user.update({
+            estado: false
+        },{
+            actividad: 'Eliminar Usuario',
+            usuarioId: req.usuario.id
+        }),
         res.status(200).json({
-            user,
-            msg: "El usuario ha sido eliminado"
+            msg: `El usuario ${user.nombre} ha sido eliminado`
         });
     } catch (err) {
         console.log("Ha ocurrido un error inesperado", err);

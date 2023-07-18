@@ -137,7 +137,10 @@ const postVenta =async(req=request,res= response)=>{
     if(detalles.length === 0){
       return res.status(401).json('No hay prodcutos que se puedan vender.')
     }
-    const notaVenta = await NotaVenta.create(obj);
+    const notaVenta = await NotaVenta.create(obj,{
+      actividad: 'Crear Venta',
+      usuarioId: req.usuario.id
+    });
     detalles.forEach((objeto) => {
       objeto.notaVentaId = notaVenta.id;
     });
@@ -170,7 +173,8 @@ const deleteVenta = async(req=request,res=response)=>{
     }
     //elimino la nota de venta
     await destruirVenta.destroy({
-      usuario: 'erick'
+      actividad: 'Eliminar Venta',
+      usuarioId: req.usuario.id
     })
     
     res.status(200).json("Se ha eliminado correctamente la venta.")

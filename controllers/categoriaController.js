@@ -52,12 +52,18 @@ const postCategoria = async(req=request, res=response)=>{
     if(categoriaDB && !categoriaDB.estado){
       await categoriaDB.update({
         estado: true
+      },{
+        actividad: 'Crear categoria',
+        usuarioId: req.usuario.id
       })
       return res.status(400).json(`La categoria ${nombre} ya se encuentra disponible`);
     }
 
     await Categoria.create({
       nombre
+    },{
+      actividad: 'Crear categoria',
+      usuarioId: req.usuario.id
     });
 
     res.status(200).json(`Se ha creado correctamente la categoria ${nombre}.`)
@@ -76,6 +82,9 @@ const deleteCategoria = async(req=request, res= response)=>{
     //estado:false para eliminar
     await categoria.update({
       estado: false
+    },{
+      actividad: 'Eliminar categoria',
+      usuarioId: req.usuario.id
     })
 
     res.status(200).json(`Se ha eliminado la categoria ${categoria.nombre} correctamente.`)

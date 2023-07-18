@@ -13,13 +13,14 @@ import {
   sumarInventarioVenta,
   eliminarDetallesVenta,
   restarInventarioCompra,
-  eliminarDetallesCompra
+  eliminarDetallesCompra,
+  createBitacoraDestroy
 } from './beforeDestroy.js';
 
 import {
-  crearInventario
+  crearInventario,
+  createBitacora
 } from './afterCreate.js';
-
 
 export {
   restarInventarioVenta,
@@ -32,5 +33,7 @@ export {
   totalCompra,
   restarInventarioCompra,
   sumarInventarioCompra,
-  crearInventario
+  crearInventario,
+  createBitacora,
+  createBitacoraDestroy
 }

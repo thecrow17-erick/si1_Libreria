@@ -1,6 +1,8 @@
 import {DataTypes} from 'sequelize';
 import db from '../config/db.js';
-
+import {
+    createBitacora,
+} from '../hooks/index.js';
 const Categoria = db.define('categorias',{
     nombre: {
         type: DataTypes.STRING(100),
@@ -11,7 +13,15 @@ const Categoria = db.define('categorias',{
         defaultValue: true
     }
 },{
-    timestamps: false
+    timestamps: false,
+    hooks: {
+        afterUpdate:[
+            createBitacora
+        ],
+        afterCreate:[
+            createBitacora
+        ]
+    }
 });
 
 Categoria.sync()

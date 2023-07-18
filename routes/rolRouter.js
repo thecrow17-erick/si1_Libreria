@@ -7,6 +7,7 @@ import {
 } from '../controllers/rolController.js';
 import { validarCampos } from '../middlewares/validarCampos.js';
 import { validarRol } from '../helpers/dbValidator.js';
+import { validarJwt } from '../middlewares/validarJwt.js';
 
 const router = Router();
 
@@ -15,12 +16,14 @@ router.get('/', getRoles);
 
 //crea un rol
 router.post('/',[
+  validarJwt,
   check('nombre','ingrese un nombre valido').notEmpty().isString(),
   validarCampos
 ], postRol);
 
 //actualiza el rol
 router.put('/:id',[
+  validarJwt,
   check('id').custom(validarRol),
   check('nombre','ingrese un nombre valido.').notEmpty().isString(),
   validarCampos
@@ -28,6 +31,7 @@ router.put('/:id',[
 
 //eliminar rol
 router.delete('/:id',[
+  validarJwt,
   check('id').custom(validarRol),
   validarCampos
 ],deleteRol)

@@ -2,7 +2,7 @@ import {DataTypes} from 'sequelize';
 import db from '../config/db.js';
 import {Categoria,Autor,Editorial} from './index.js';
 import { 
-    crearInventario
+    crearInventario, createBitacora
 } from '../hooks/index.js';
 
 
@@ -46,7 +46,11 @@ const Libro = db.define('Libros',{
 },{
     hooks:{
         afterCreate:[
-            crearInventario
+            crearInventario,
+            createBitacora
+        ],
+        afterUpdate:[
+            createBitacora
         ]
     }
 })

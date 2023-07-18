@@ -1,5 +1,6 @@
 import {DataTypes} from 'sequelize';
 import db from '../config/db.js';
+import { createBitacora } from '../hooks/afterCreate.js';
 
 const Proveedor = db.define('proveedores',{
   nombre: {
@@ -24,9 +25,12 @@ const Proveedor = db.define('proveedores',{
   }
 },{
   hooks: {
-    beforeCreate: function(proveedor, options){
-        console.log(options);
-      }
+    beforeCreate: [
+      createBitacora
+    ],
+    afterUpdate:[
+      createBitacora
+    ]
   }
 })
 

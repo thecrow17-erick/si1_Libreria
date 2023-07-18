@@ -11,13 +11,14 @@ const getBitacoras = async(req= request, res=response)=>{
     const [bitacoras, total] = await Promise.all([
       Bitacora.findAll({
         offset,
-        limit
+        limit,
+        order: [['id','DESC']]
       }),
       Bitacora.count()     
     ])
     res.status(200).json({
       total,
-      bitacoras
+      bitacoras   
     })
   } catch (err) {
     console.log(err);

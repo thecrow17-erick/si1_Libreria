@@ -60,12 +60,12 @@ const postProveedor = async(req=request, res=response)=>{
     if(proveedorDB && proveedorDB.estado){
       return res.status(200).json(`El proveedor ${nombre} ya se encuentra en el sistema`)
     }
-    const proveedor = await Proveedor.create(obj,{
-      usuario: 'Erick'
+    await Proveedor.create(obj,{
+      actividad: 'Crear proveedor',
+      usuarioId: req.usuario.id
     });
     res.status(200).json({
-      proveedor,
-      msg: "Se ha creado correctamente un proveedor"
+      msg: `El proveedor ${nombre} ha sido registrado exitosamente.`
     })
   } catch (err) {
     console.log(err);
@@ -79,7 +79,10 @@ const putProveedor = async(req=request, res=response)=>{
     const proveedor = await Proveedor.findByPk(id);
 
     //actualiza al proveedor
-    await proveedor.update(obj);
+    await proveedor.update(obj,{
+      actividad: 'Actualizar proveedor',
+      usuarioId: req.usuario.id
+    });
 
     res.status(200).json({
       msg: `El proveedor ${proveedor.nombre} ha sido actualizado correctamente`
@@ -97,6 +100,9 @@ const deleteProveedor = async(req=request, res=response)=>{
   
     await proveedor.update({
       estado: false
+    },{
+      actividad: 'Eliminar proveedor',
+      usuarioId: req.usuario.id
     })
     res.status(200).json("Se ha eliminado el proveedor correctamente")
   } catch (err) {

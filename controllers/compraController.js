@@ -109,7 +109,10 @@ const postCompra = async(req=request, res=response)=>{
       return res.status(401).json('No hay productos que se puedan comprar.')
     }
     //creo la nota de compra
-    const notaCompra = await NotaCompra.create(obj);
+    const notaCompra = await NotaCompra.create(obj,{
+      actividad: 'Crear compra',
+      usuarioId: req.usuario.id
+    });
     //meto id de la nota de compra a los detalles
     detalles.forEach(detalle => {
       detalle.NotaCompraId= notaCompra.id
@@ -136,7 +139,10 @@ const deleteCompra = async(req=request, res=response)=>{
       return res.status(400).json("El usuario no es administrador para borrar la compra")
     }
     //elimino la nota de compra 
-    await compra.destroy();
+    await compra.destroy({
+      actividad: 'Eliminar compra',
+      usuarioId: req.usuario.id
+    });
     res.status(200).json("Se ha eliminado correctamente la compra.")
   } catch (err) {
     console.log(err);

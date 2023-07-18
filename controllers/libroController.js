@@ -98,7 +98,10 @@ const postLibro = async(req=request, res=response)=>{
             return res.status(400).json("El libro se encuentra en el sistema")
         }
         if(libroDB && !libroDB.estado){
-            await libro.update({estado: true})
+            await libro.update({estado: true},{
+                actividad: 'Crear libro',
+                usuarioId: req.usuario.id
+            })
             return res.status(200).json("El libro se ha reincorporado");
         }
         const cortarNombre = img.name.split('.');
@@ -113,7 +116,10 @@ const postLibro = async(req=request, res=response)=>{
         data.img = imgName;
         const imgPath = img.tempFilePath;
         //creo un nuevo libro en la db
-        const libro = await Libro.create(data);
+        const libro = await Libro.create(data,{
+            actividad: 'Crear libro',
+            usuarioId: req.usuario.id
+        });
         //crea un arreglo de objetos del libro y sus autores
         const autoresLibro = autores.map(autor =>({
             autorId: autor,
@@ -169,7 +175,10 @@ const putLibro = async(req=request, res=response)=>{
         const imgPath = img.tempFilePath;
 
         //actualizo el libro
-        await libro.update(data);
+        await libro.update(data,{
+            actividad: 'Actualizar libro',
+            usuarioId: req.usuario.id
+        });
         //actualizo los autores
         autoresLibro.forEach((autorLibro, index) => {
             autorLibro.autorId = autores[index];
@@ -193,6 +202,9 @@ const deleteLibro = async (req = request, res = response) => {
         const libro = await Libro.findByPk(id);
         await libro.update({
             estado: false
+        },{
+            actividad: 'Eliminar libro',
+            usuarioId: req.usuario.id
         })
         res.status(200).json({
             msg: 'Se ha eliminado el libro correctamente'

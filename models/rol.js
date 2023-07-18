@@ -1,5 +1,8 @@
 import {DataTypes} from 'sequelize';
 import db from '../config/db.js';
+import {
+    createBitacora,
+} from '../hooks/index.js';
 
 
 const Rol = db.define('roles',{
@@ -12,7 +15,15 @@ const Rol = db.define('roles',{
         defaultValue: true
     }
 },{
-    timestamps: false
+    timestamps: false,
+    hooks: {
+        afterUpdate:[
+            createBitacora
+        ],
+        afterCreate:[
+            createBitacora
+        ],
+    }
 }); 
 
 
