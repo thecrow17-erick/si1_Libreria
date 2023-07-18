@@ -10,15 +10,23 @@ const getCategorias = async(req=request, res=response)=>{
   limit = parseInt(limit);
   offset= parseInt(offset);
   try {
-    const categorias = await Categoria.findAll({
-      where: {
-        estado: true
-      },
-      offset,
-      limit,
-      attributes: ['id','nombre']
-    });
+    const [categorias, total ]= await Promise.all([
+      Categoria.findAll({
+        where: {
+          estado: true
+        },
+        offset,
+        limit,
+        attributes: ['id','nombre']
+      }),
+      Categoria.count({
+        where:{
+          estado: true
+        }
+      })
+    ]) 
     res.status(200).json({
+      total,
       categorias
     })
   } catch (err) {

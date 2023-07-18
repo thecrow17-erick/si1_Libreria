@@ -90,7 +90,9 @@ class server {
         this.app.use(express.static('public'));
         
         //habilitar para los pedidos API
-        this.app.use(cors());
+        this.app.use(cors({
+            origin: '*'
+        }));
 
         // habilitar los formularios 
         this.app.use(express.urlencoded({extended: true}))

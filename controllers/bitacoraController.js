@@ -8,11 +8,15 @@ const getBitacoras = async(req= request, res=response)=>{
   limit = parseInt(limit);
   offset = parseInt(offset)
   try {
-    const bitacoras = await Bitacora.findAll({
-      offset,
-      limit
-    })
+    const [bitacoras, total] = await Promise.all([
+      Bitacora.findAll({
+        offset,
+        limit
+      }),
+      Bitacora.count()     
+    ])
     res.status(200).json({
+      total,
       bitacoras
     })
   } catch (err) {

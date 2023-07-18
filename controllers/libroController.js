@@ -1,6 +1,6 @@
 import {request,response} from 'express';
 import { Autor, Categoria, Editorial, Inventario, Libro, LibroAutor } from '../models/index.js';
-import {postImageBlobStorage ,getFileUrlFromBlobStorage} from '../config/azureBlobStorage.js';
+import {postImageBlobStorage ,getFileUrlFromBlobStorage, deleteBlob} from '../config/azureBlobStorage.js';
 import { v4 as uuidv4} from 'uuid';
 
 //muestra todos los libros - total - paginado
@@ -131,66 +131,72 @@ const postLibro = async(req=request, res=response)=>{
 }   
 const putLibro = async(req=request, res=response)=>{
     const {id} = req.params;
-    const {titulo,precio, fecha_publicacion,categoria,autor, editorial} = req.body;
-    const libroDB = await Libro.findByPk(id);
-    if(!libroDB.estado){
-        return res.status(400).json({
-            msg: 'El usuario no existe o no esta activo.'
-        })
+    const {titulo,precio,categoriaId,fecha_publicacion} = req.body;
+    const {img} = req.files;
+    const data = {
+        titulo,
+        precio,
+        categoriaId,
+        fecha_publicacion,
+        editorialId: req.editorial
     }
+    const {autores} = req;
     try {
-        //saco los datos si existen, sino los creo
-        const [autorDB, categoriaDB, editorialDB] = await Promise.all([
-            Autor.findOrCreate({where:{nombre: autor}}),
-            Categoria.findOrCreate({where:{nombre: categoria}}),
-            Editorial.findOrCreate({where:{nombre: editorial}})
+        
+        //elimino la imagen y incorporo la nueva imagen
+        const[libro, autoresLibro] = await Promise.all([
+            Libro.findByPk(id),
+            LibroAutor.findAll({
+                where:{
+                    libroId: id
+                }
+            })
         ])
-        const data = {
-            titulo,
-            precio,
-            fecha_publicacion,
-            editorialId: editorialDB[0].dataValues.id,
-            categoriaId: categoriaDB[0].dataValues.id
-        } 
-        //actualizo todo el libro
-        await Promise.all([
-            await libroDB.update(data),
-            await libroDB.save()
-        ])
-        //actualizo libroAutor
-        const libroAutorDB = await LibroAutor.findOne({where: {libroId: libroDB.id}});
-        await Promise.all([
-            await libroAutorDB.update({autorId : autorDB[0].dataValues.id}),
-            await libroAutorDB.save()
-        ])
-        //lo mando al server
-        res.status(200).json({
-            libro: libroDB,
-            msg: `Se ha actualizado correctamente el libro ${libroDB.titulo}`
+        const eliminar = await deleteBlob(libro.img);
+        console.log(eliminar);
+        if(!eliminar){
+            return res.status(401).json("Ocurrio un error inesperado")
+        }
+        const cortarNombre = img.name.split('.');
+        const extension = cortarNombre[cortarNombre.length - 1]
+        //validar extensiones 
+        const validarExtensiones = ['png','jpg','jpeg'];
+        if(!validarExtensiones.includes(extension)){
+            return res.status(400).json("La extension no es permitida")
+        }
+        const imgName = uuidv4()+'.' +extension;
+        data.img = imgName;
+        const imgPath = img.tempFilePath;
+
+        //actualizo el libro
+        await libro.update(data);
+        //actualizo los autores
+        autoresLibro.forEach((autorLibro, index) => {
+            autorLibro.autorId = autores[index];
+        });
+        // Guardar los cambios realizados en cada registro
+        await Promise.all(autoresLibro.map(autorLibro => autorLibro.save()));
+        //guardar imagen
+        const resp = await postImageBlobStorage( imgName, imgPath);
+        console.log(resp);
+        return res.status(200).json({
+            msg: `Se ha actualizado correctamente el libro ${libro.titulo}`,
+            libro,
+            autoresLibro
         })
-    } catch (error) {
-        console.log('Ha ocurrido un error inesperado', error);
-        res.status(401).json({
-            msg: 'Ha ocurrido un error inesperado, intente de nuevo'
-        })
+    } catch (err) {
+        console.log(err);
+        res.status(401).json("Ha ocurrido un error inesperado")
     }
 }
 const deleteLibro = async (req = request, res = response) => {
     const { id } = req.params;
     try {
-        const libroDB = await Libro.findByPk(id);
-        if (!libroDB) {
-            return res.status(400).json({
-                msg: 'El libro no existe'
-            });
-        }
-
-        await Promise.all([
-         libroDB.update({ estado: false }),
-         libroDB.save()
-        ])    
+        const libro = await Libro.findByPk(id);
+        await libro.update({
+            estado: false
+        })
         res.status(200).json({
-            libroDB,
             msg: 'Se ha eliminado el libro correctamente'
         });
     } catch (err) {

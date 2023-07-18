@@ -8,16 +8,24 @@ import { Rol } from '../models/index.js';
 const getRoles = async(req=request, res=response)=>{
   let {limit = 10, offset = 0} = req.query;
   try {
-    const roles = await Rol.findAll({
-      where:{
-        estado: true
-      },
-      limit,
-      offset,
-      attributes: ['id','nombre']
-    })
+    const [roles, total] = await Promise.all([
+      Rol.findAll({
+        where:{
+          estado: true
+        },
+        limit,
+        offset,
+        attributes: ['id','nombre']
+      }),
+      Rol.count({
+        where: {
+          estado: true
+        }
+      })
+    ]) 
 
     res.status(200).json({
+      total,
       roles
     })
   } catch (err) {
