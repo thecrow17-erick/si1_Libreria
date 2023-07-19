@@ -2,6 +2,65 @@ import {request,response} from 'express';
 import { Autor, Categoria, Editorial, Inventario, Libro, LibroAutor } from '../models/index.js';
 import {postImageBlobStorage ,getFileUrlFromBlobStorage, deleteBlob} from '../config/azureBlobStorage.js';
 import { v4 as uuidv4} from 'uuid';
+import { Op } from 'sequelize';
+
+//mostrar a los clientes
+const getLibrosClientes = async(req=request, res=response)=>{
+    let {limit = 10, offset = 0} = req.query;
+    limit=parseInt(limit);
+    offset=parseFloat(offset);
+    try {
+        const [libros, total] = await Promise.all([
+            Libro.findAll({
+                where: {
+                    estado: true,
+                },
+                attributes: ['id','titulo','precio', 'img'],
+                include:[
+                    {
+                        model: Inventario,
+                        attributes: ['cantidad'],
+                        where:{
+                            cantidad: {
+                                [Op.gt] : 0
+                            }
+                        }
+                    }
+                ],
+                limit,
+                offset,
+            }),
+            Libro.count({
+                where: {
+                    estado: true
+                },
+                include:[
+                    {
+                        model: Inventario,
+                        attributes: ['cantidad'],
+                        where:{
+                            cantidad: {
+                                [Op.gt] : 0
+                            }
+                        }
+                    }
+                ]
+            })
+        ]) 
+        for(const libro of libros){
+            const imageUrl = getFileUrlFromBlobStorage(libro.img);
+            libro.img = imageUrl;
+        }
+
+        res.status(200).json({
+            total,
+            libros
+        })
+    } catch (err) {
+        console.log(err);
+        res.status(401).json("Ha ocurrido un error inesperado.")
+    }
+}
 
 //muestra todos los libros - total - paginado
 const getLibros = async(req=request, res=response)=>{
@@ -222,4 +281,5 @@ export {
     postLibro,
     putLibro,
     deleteLibro,
+    getLibrosClientes
 }

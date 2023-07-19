@@ -1,12 +1,15 @@
 import {Router} from 'express';
 import {check} from 'express-validator';
-import {deleteLibro, getLibro, getLibros, postLibro, putLibro} from '../controllers/libroController.js';
+import {deleteLibro, getLibro, getLibros, getLibrosClientes, postLibro, putLibro} from '../controllers/libroController.js';
 import { validarCampos } from '../middlewares/validarCampos.js';
 import { validarLibro } from '../helpers/dbValidator.js';
 import { validarAutores, validarEditorial } from '../middlewares/validarDB.js';
 import { validarJwt } from '../middlewares/validarJwt.js';
 
 const router = Router();
+
+//publico - clientes - paginado
+router.get('/cliente', getLibrosClientes)
 
 //publico - cantidad - paginado 
 router.get('/',getLibros);
