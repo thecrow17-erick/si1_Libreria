@@ -49,7 +49,7 @@ const NotaCompra = db.define('nota_compra',{
     beforeDestroy:[
       restarInventarioCompra,
       eliminarDetallesCompra,
-      createBitacoraDestroy
+      createBitacora
     ],
     afterCreate:[
       createBitacora

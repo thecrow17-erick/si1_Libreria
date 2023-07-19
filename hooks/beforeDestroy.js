@@ -78,8 +78,9 @@ const eliminarDetallesCompra = async(notaCompra)=>{
     throw new Error('Ha ocurrido un error')
   }
 }
-const createBitacoraDestroy = async({actividad,usuarioId})=>{
+const createBitacoraDestroy = async(options)=>{
   try {
+    console.log(actividad, usuarioId);
     await Bitacora.create({
       actividad,
       usuarioId,

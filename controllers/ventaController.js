@@ -167,6 +167,7 @@ const deleteVenta = async(req=request,res=response)=>{
   try {
     const destruirVenta = await NotaVenta.findByPk(id);
     //verifico si el usuario es administrador
+    console.log(usuario.id);
     const administrador = usuario.role.nombre;
     if(administrador !== "Administrador"){
       return res.status(401).json("el usuario no es administrador")
@@ -174,7 +175,7 @@ const deleteVenta = async(req=request,res=response)=>{
     //elimino la nota de venta
     await destruirVenta.destroy({
       actividad: 'Eliminar Venta',
-      usuarioId: req.usuario.id
+      usuarioId: usuario.id
     })
     
     res.status(200).json("Se ha eliminado correctamente la venta.")

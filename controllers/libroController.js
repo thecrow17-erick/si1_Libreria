@@ -40,7 +40,7 @@ const getLibrosClientes = async(req=request, res=response)=>{
                         attributes: ['cantidad'],
                         where:{
                             cantidad: {
-                                [Op.gt] : 0
+                                [Op.gt] : -1
                             }
                         }
                     }
