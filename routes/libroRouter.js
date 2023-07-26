@@ -23,7 +23,7 @@ router.get('/:id',[
 
 //privado - para crear libros
 router.post('/',[
-    //validarJwt,
+    validarJwt,
     check('titulo','Ponga un nombre valido').notEmpty().isString(),
     check('precio','Ponga un numero razonable').notEmpty().isDecimal({decimal_digits: 2}),
     check('categoriaId', 'Debe ser una categoria valida').notEmpty().isNumeric(),
