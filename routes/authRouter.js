@@ -13,7 +13,7 @@ router.post('/login', [
     validarCampos
 ],login)
 
-router.post('/unlogin',[
+router.post('/logout',[
     validarJwt
 ],unlogin)
 
