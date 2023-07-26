@@ -3,11 +3,12 @@ import {Autor, Editorial} from '../models/index.js';
 
 const validarAutores = async(req=request, res=response, next)=>{
   const {autores} = req.body;
-  if (!autores || autores.length === 0) {
+  const parsedValue = JSON.parse(autores)
+  if (!autores || parsedValue.length === 0) {
     return res.status(400).json({ error: 'Debe proporcionar al menos un autor.' });
   }
   const autoresIdS = [];
-  for(const autore of autores){
+  for(const autore of parsedValue){
     const [autor, create] = await Autor.findOrCreate({
       where: {
         nombre: autore

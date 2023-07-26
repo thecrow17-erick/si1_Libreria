@@ -5,6 +5,7 @@ import { validarCampos } from '../middlewares/validarCampos.js';
 import { validarLibro } from '../helpers/dbValidator.js';
 import { validarAutores, validarEditorial } from '../middlewares/validarDB.js';
 import { validarJwt } from '../middlewares/validarJwt.js';
+import { isArrayBody } from '../middlewares/jsonParsers.js';
 
 const router = Router();
 
@@ -22,12 +23,12 @@ router.get('/:id',[
 
 //privado - para crear libros
 router.post('/',[
-    validarJwt,
+    //validarJwt,
     check('titulo','Ponga un nombre valido').notEmpty().isString(),
     check('precio','Ponga un numero razonable').notEmpty().isDecimal({decimal_digits: 2}),
     check('categoriaId', 'Debe ser una categoria valida').notEmpty().isNumeric(),
     check('fecha_publicacion', 'Ponga una fecha valida').notEmpty().isDate({format: 'YYYY-MM-DD'}),
-    check('autores','Ingrese autores validos.').notEmpty().isArray({min: 1}),
+    check('autores').notEmpty().custom(isArrayBody),
     check('editorial','Ingrese una editorial valida').notEmpty().isString(),
     validarAutores,
     validarEditorial,
