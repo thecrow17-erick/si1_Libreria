@@ -30,6 +30,7 @@ router.post('/',[
     check('fecha_publicacion', 'Ponga una fecha valida').notEmpty().isDate({format: 'YYYY-MM-DD'}),
     check('autores').notEmpty().custom(isArrayBody),
     check('editorial','Ingrese una editorial valida').notEmpty().isString(),
+    check('img','ingrese una imagen valida.').notEmpty()..isBase64(),
     validarAutores,
     validarEditorial,
     validarCampos
@@ -44,6 +45,7 @@ router.put('/:id',[
     check('fecha_publicacion', 'Ponga una fecha valida').notEmpty().isDate({format: 'YYYY-MM-DD'}),
     check('autores','Ingrese autores validos.').notEmpty().isArray({min: 1}),
     check('editorial','Ingrese una editorial valida').notEmpty().isString(),
+    check('img','ingrese una imagen valida.').notEmpty()..isBase64(),
     validarAutores,
     validarEditorial,
     validarCampos
